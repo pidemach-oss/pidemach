@@ -708,8 +708,8 @@
     </div>
     <div class="plato-body">
       <div>
-        <div class="plato-nombre">Pasta del mes <span class="mes-badge">Agosto</span></div>
-        <div class="plato-desc-short">Cambia cada mes. A nuestro estilo, siempre distinta.</div>
+        <div class="plato-nombre">Pasta del mes <span class="mes-badge">Septiembre</span></div>
+        <div class="plato-desc-short">Tagliattelle con carrilleras ibéricas. A nuestro estilo, siempre distinta.</div>
       </div>
       <div class="plato-footer">
         <div class="plato-precio">11,95€</div>
@@ -878,9 +878,9 @@ const PLATOS = {
   },
   mes: {
     nombre:'Pasta del mes', precio:'11,95€', precioN:11.95,
-    img:'products/mensual_sinfondo.png',
-    desc:'Cada mes, un plato diferente. A nuestro estilo, siempre con sentido. Puede ser pasta con carrilleras ibéricas, un cacio e pepe con queso manchego, o algo que todavía no hemos anunciado. Apúntate a la lista de espera para ser el primero en enterarte.',
-    ings:['Cambia cada mes','A nuestro estilo','Siempre distinto']
+    img:'products/mensual_close.jpg',
+    desc:'Este mes nos hemos ido al sur. Tagliattelle fresco, hecho en casa, con carrilleras ibéricas guisadas a fuego lento hasta que se deshacen solas. Salsa oscura, profunda, con un toque de pimentón de la Vera y un golpe de vino tinto que no te esperas. Plato de cuchara con tenedor. Lo mejor de los dos mundos.',
+    ings:['Tagliattelle fresco','Carrillera ibérica','Pimentón de la Vera','Vino tinto','Cebolla caramelizada','Aceite de oliva']
   }
 };
 
@@ -904,13 +904,8 @@ function updateCTA(){
     lbl.textContent = 'Ir a pagar';
   } else if(currentView==='detalle'){
     const id = window._detalleId;
-    if (id === 'mes') {
-      btn.disabled = true;
-      lbl.textContent = 'No disponible';
-    } else {
-      btn.disabled = false;
-      lbl.textContent = S.plato===id ? '✓ Ya en el pedido' : 'Añadir al pedido';
-    }
+    btn.disabled = false;
+    lbl.textContent = S.plato===id ? '✓ Ya en el pedido' : 'Añadir al pedido';
     document.getElementById('cta-total').textContent = PLATOS[id].precio;
   }
 }
@@ -932,10 +927,7 @@ function showTab(id, el){
 
 function selectPlato(id, nombre, price, e){
   if(e) e.stopPropagation();
-  if (id === 'mes') {
-    alert("Este plato no está disponible aún.");
-    return;
-  }
+
   if(S.plato===id){
     S.plato=null; S.platoN=null; S.platoP=0;
     document.getElementById('card-'+id).classList.remove('selected');
@@ -999,7 +991,7 @@ function openDetalle(id, e){
     detPh.style.display = 'block';
   }
   if (detCS) {
-    detCS.style.display = (id === 'mes') ? 'flex' : 'none';
+    detCS.style.display = 'none';
   }
 
   ['tab-platos','tab-bebidas','tab-postres'].forEach(s=>{
