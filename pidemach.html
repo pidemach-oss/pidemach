@@ -711,7 +711,7 @@
     <div class="plato-body">
       <div>
         <div class="plato-nombre">Pasta del mes <span class="mes-badge">Septiembre</span></div>
-        <div class="plato-desc-short">Tagliattelle con carrilleras ibéricas. A nuestro estilo, siempre distinta.</div>
+        <div class="plato-desc-short">Tagliattelle con carrilleras ibéricas a fuego lento. Salsa de vino tinto y pimentón.</div>
       </div>
       <div class="plato-footer">
         <div class="plato-precio">11,95€</div>
@@ -753,6 +753,27 @@
     <div class="bebida-img"><img src="products/mahou.png" alt="Mahou"></div>
     <div class="bebida-info"><div class="bebida-nombre">Mahou</div><div class="bebida-vol">Lata 33cl</div></div>
     <div class="bebida-precio">3,00€</div>
+    <div class="check-circle">✓</div>
+  </div>
+
+  <div class="bebida-card" id="beb-aquarius" onclick="selectBebida('aquarius','Aquarius Limón',3)">
+    <div class="bebida-img"><img src="products/aquarius.png" alt="Aquarius Limón"></div>
+    <div class="bebida-info"><div class="bebida-nombre">Aquarius Limón</div><div class="bebida-vol">Lata 33cl</div></div>
+    <div class="bebida-precio">3,00€</div>
+    <div class="check-circle">✓</div>
+  </div>
+
+  <div class="bebida-card" id="beb-nestea" onclick="selectBebida('nestea','Nestea Limón',3)">
+    <div class="bebida-img"><img src="products/nestea.png" alt="Nestea Limón"></div>
+    <div class="bebida-info"><div class="bebida-nombre">Nestea Limón</div><div class="bebida-vol">Lata 33cl</div></div>
+    <div class="bebida-precio">3,00€</div>
+    <div class="check-circle">✓</div>
+  </div>
+
+  <div class="bebida-card" id="beb-agua" onclick="selectBebida('agua','Agua mineral',2)">
+    <div class="bebida-img"><img src="products/agua.png" alt="Agua mineral"></div>
+    <div class="bebida-info"><div class="bebida-nombre">Agua mineral</div><div class="bebida-vol">Botella 50cl</div></div>
+    <div class="bebida-precio">2,00€</div>
     <div class="check-circle">✓</div>
   </div>
 </div>
@@ -803,7 +824,7 @@
     </div>
     <div class="res-item" id="res-beb" style="display:none">
       <div><div class="res-nombre" id="res-beb-n">—</div><div class="res-sub">Bebida</div></div>
-      <div class="res-precio">3,00€</div>
+      <div class="res-precio" id="res-beb-p">3,00€</div>
     </div>
   </div>
   <div class="res-total"><span>Total</span><span id="res-total-v">—</span></div>
@@ -861,7 +882,7 @@
 </div>
 
 <script>
-const S = { plato:null, platoN:null, platoP:0, queso:false, bebida:null, bebidaN:null };
+const S = { plato:null, platoN:null, platoP:0, queso:false, bebida:null, bebidaN:null, bebidaP:0 };
 let currentView = 'carta';
 let pendingPlato = null;
 
@@ -887,7 +908,7 @@ const PLATOS = {
 };
 
 function fmt(n){ return n.toFixed(2).replace('.',',')+'\u20ac'; }
-function total(){ return S.platoP+(S.queso?1:0)+(S.bebida?3:0); }
+function total(){ return S.platoP+(S.queso?1:0)+(S.bebidaP||0); }
 
 function updateCTA(){
   document.getElementById('cta-total').textContent = fmt(total());
@@ -1019,10 +1040,10 @@ function closeDetalle(){
   currentView='carta'; updateCTA(); window.scrollTo(0,0);
 }
 
-function selectBebida(id,nombre){
-  ['cola','zero','fanta','mahou'].forEach(b=>document.getElementById('beb-'+b).classList.remove('selected'));
-  if(S.bebida===id){ S.bebida=null; S.bebidaN=null; }
-  else { S.bebida=id; S.bebidaN=nombre; document.getElementById('beb-'+id).classList.add('selected'); }
+function selectBebida(id,nombre,price){
+  document.querySelectorAll('.bebida-card').forEach(b=>b.classList.remove('selected'));
+  if(S.bebida===id){ S.bebida=null; S.bebidaN=null; S.bebidaP=0; }
+  else { S.bebida=id; S.bebidaN=nombre; S.bebidaP=price||3; document.getElementById('beb-'+id).classList.add('selected'); }
   updateCTA();
 }
 
@@ -1049,7 +1070,7 @@ function goResumen(){
   document.getElementById('res-plato-p').textContent=fmt(S.platoP);
   document.getElementById('res-queso').style.display=S.queso?'flex':'none';
   const rb=document.getElementById('res-beb');
-  if(S.bebida){rb.style.display='flex';document.getElementById('res-beb-n').textContent=S.bebidaN;}
+  if(S.bebida){rb.style.display='flex';document.getElementById('res-beb-n').textContent=S.bebidaN;document.getElementById('res-beb-p').textContent='+'+fmt(S.bebidaP);}
   else rb.style.display='none';
   document.getElementById('res-total-v').textContent=fmt(total());
   document.getElementById('cta-btn').disabled=false;
