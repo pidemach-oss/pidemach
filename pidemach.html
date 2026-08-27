@@ -728,52 +728,52 @@
 <div class="screen" id="tab-bebidas">
   <div class="slabel">Bebidas</div>
 
-  <div class="bebida-card" id="beb-cola" onclick="selectBebida('cola','Coca-Cola',3)">
+  <div class="bebida-card" id="beb-cola" onclick="selectBebida('cola','Coca-Cola',2.5)">
     <div class="bebida-img"><img src="products/coca_cola.png" alt="Coca-Cola"></div>
     <div class="bebida-info"><div class="bebida-nombre">Coca-Cola</div><div class="bebida-vol">Lata 33cl</div></div>
-    <div class="bebida-precio">3,00€</div>
+    <div class="bebida-precio">2,50€</div>
     <div class="check-circle">✓</div>
   </div>
 
-  <div class="bebida-card" id="beb-zero" onclick="selectBebida('zero','Coca-Cola Zero',3)">
+  <div class="bebida-card" id="beb-zero" onclick="selectBebida('zero','Coca-Cola Zero',2.5)">
     <div class="bebida-img"><img src="products/coca_cola_zero.png" alt="Coca-Cola Zero"></div>
     <div class="bebida-info"><div class="bebida-nombre">Coca-Cola Zero</div><div class="bebida-vol">Lata 33cl</div></div>
-    <div class="bebida-precio">3,00€</div>
+    <div class="bebida-precio">2,50€</div>
     <div class="check-circle">✓</div>
   </div>
 
-  <div class="bebida-card" id="beb-fanta" onclick="selectBebida('fanta','Fanta Naranja',3)">
+  <div class="bebida-card" id="beb-fanta" onclick="selectBebida('fanta','Fanta Naranja',2.5)">
     <div class="bebida-img"><img src="products/fanta.png" alt="Fanta Naranja"></div>
     <div class="bebida-info"><div class="bebida-nombre">Fanta Naranja</div><div class="bebida-vol">Lata 33cl</div></div>
-    <div class="bebida-precio">3,00€</div>
+    <div class="bebida-precio">2,50€</div>
     <div class="check-circle">✓</div>
   </div>
 
-  <div class="bebida-card" id="beb-mahou" onclick="selectBebida('mahou','Mahou',3)">
+  <div class="bebida-card" id="beb-mahou" onclick="selectBebida('mahou','Mahou',2.5)">
     <div class="bebida-img"><img src="products/mahou.png" alt="Mahou"></div>
     <div class="bebida-info"><div class="bebida-nombre">Mahou</div><div class="bebida-vol">Lata 33cl</div></div>
-    <div class="bebida-precio">3,00€</div>
+    <div class="bebida-precio">2,50€</div>
     <div class="check-circle">✓</div>
   </div>
 
-  <div class="bebida-card" id="beb-aquarius" onclick="selectBebida('aquarius','Aquarius Limón',3)">
+  <div class="bebida-card" id="beb-aquarius" onclick="selectBebida('aquarius','Aquarius Limón',2.5)">
     <div class="bebida-img"><img src="products/aquarius.png" alt="Aquarius Limón"></div>
     <div class="bebida-info"><div class="bebida-nombre">Aquarius Limón</div><div class="bebida-vol">Lata 33cl</div></div>
-    <div class="bebida-precio">3,00€</div>
+    <div class="bebida-precio">2,50€</div>
     <div class="check-circle">✓</div>
   </div>
 
-  <div class="bebida-card" id="beb-nestea" onclick="selectBebida('nestea','Nestea Limón',3)">
+  <div class="bebida-card" id="beb-nestea" onclick="selectBebida('nestea','Nestea Limón',2.5)">
     <div class="bebida-img"><img src="products/nestea.png" alt="Nestea Limón"></div>
     <div class="bebida-info"><div class="bebida-nombre">Nestea Limón</div><div class="bebida-vol">Lata 33cl</div></div>
-    <div class="bebida-precio">3,00€</div>
+    <div class="bebida-precio">2,50€</div>
     <div class="check-circle">✓</div>
   </div>
 
-  <div class="bebida-card" id="beb-agua" onclick="selectBebida('agua','Agua mineral',2)">
+  <div class="bebida-card" id="beb-agua" onclick="selectBebida('agua','Agua mineral',1.5)">
     <div class="bebida-img"><img src="products/agua.png" alt="Agua mineral"></div>
     <div class="bebida-info"><div class="bebida-nombre">Agua mineral</div><div class="bebida-vol">Botella 50cl</div></div>
-    <div class="bebida-precio">2,00€</div>
+    <div class="bebida-precio">1,50€</div>
     <div class="check-circle">✓</div>
   </div>
 </div>
@@ -814,10 +814,7 @@
     <span class="slabel" style="padding:0;flex:1;">Tu pedido</span>
   </div>
   <div class="resumen-card">
-    <div class="res-item" id="res-plato" style="display:none">
-      <div><div class="res-nombre" id="res-plato-n">—</div><div class="res-sub">Plato principal</div></div>
-      <div class="res-precio" id="res-plato-p">—</div>
-    </div>
+    <div id="res-platos-container"></div>
     <div class="res-item" id="res-queso" style="display:none">
       <div><div class="res-nombre">Queso rallado</div><div class="res-sub">Extra</div></div>
       <div class="res-precio">+1,00€</div>
@@ -882,7 +879,7 @@
 </div>
 
 <script>
-const S = { plato:null, platoN:null, platoP:0, queso:false, bebida:null, bebidaN:null, bebidaP:0 };
+const S = { platos:{}, queso:false, bebida:null, bebidaN:null, bebidaP:0 };
 let currentView = 'carta';
 let pendingPlato = null;
 
@@ -908,27 +905,28 @@ const PLATOS = {
 };
 
 function fmt(n){ return n.toFixed(2).replace('.',',')+'\u20ac'; }
-function total(){ return S.platoP+(S.queso?1:0)+(S.bebidaP||0); }
+function platosTotal(){ let t=0; for(const id in S.platos) t+=S.platos[id].price; return t; }
+function total(){ return platosTotal()+(S.queso?1:0)+(S.bebidaP||0); }
+function platosCount(){ return Object.keys(S.platos).length; }
 
 function updateCTA(){
   document.getElementById('cta-total').textContent = fmt(total());
   const btn = document.getElementById('cta-btn');
   const lbl = document.getElementById('cta-label');
-  let count = 0;
-  if(S.plato) count++;
+  let count = platosCount();
   if(S.queso) count++;
   if(S.bebida) count++;
   document.getElementById('bcount').textContent = count;
   if(currentView==='carta'){
-    btn.disabled = !S.plato;
-    lbl.textContent = S.plato ? 'Ver pedido' : 'Elige un plato para empezar';
+    btn.disabled = platosCount()===0;
+    lbl.textContent = platosCount()>0 ? 'Ver pedido' : 'Elige un plato para empezar';
   } else if(currentView==='resumen'){
     btn.disabled = false;
     lbl.textContent = 'Ir a pagar';
   } else if(currentView==='detalle'){
     const id = window._detalleId;
     btn.disabled = false;
-    lbl.textContent = S.plato===id ? '✓ Ya en el pedido' : 'Añadir al pedido';
+    lbl.textContent = S.platos[id] ? '✓ Ya en el pedido' : 'Añadir al pedido';
     document.getElementById('cta-total').textContent = PLATOS[id].precio;
   }
 }
@@ -951,26 +949,24 @@ function showTab(id, el){
 function selectPlato(id, nombre, price, e){
   if(e) e.stopPropagation();
 
-  if(S.plato===id){
-    S.plato=null; S.platoN=null; S.platoP=0;
+  if(S.platos[id]){
+    // Deselect this plato
+    delete S.platos[id];
     document.getElementById('card-'+id).classList.remove('selected');
     document.getElementById('btn-'+id).textContent='Añadir';
     document.getElementById('btn-'+id).classList.remove('added');
     updateCTA(); return;
   }
-  // deselect previous
-  ['mac','carb','mes'].forEach(p=>{
-    document.getElementById('card-'+p).classList.remove('selected');
-    document.getElementById('btn-'+p).textContent='Añadir';
-    document.getElementById('btn-'+p).classList.remove('added');
-  });
-  S.plato=id; S.platoN=nombre; S.platoP=price;
+  // Add this plato
+  S.platos[id] = { nombre:nombre, price:price };
   document.getElementById('card-'+id).classList.add('selected');
   document.getElementById('btn-'+id).textContent='✓ Añadido';
   document.getElementById('btn-'+id).classList.add('added');
-  // Show queso popup
-  pendingPlato = id;
-  abrirPop();
+  // Show queso popup only on first plato
+  if(platosCount()===1){
+    pendingPlato = id;
+    abrirPop();
+  }
   updateCTA();
 }
 
@@ -1050,14 +1046,14 @@ function selectBebida(id,nombre,price){
 function ctaAction(){
   if(currentView==='detalle'){
     const id=window._detalleId; const d=PLATOS[id];
-    if(S.plato!==id){ selectPlato(id,d.nombre,d.precioN,null); }
+    if(!S.platos[id]){ selectPlato(id,d.nombre,d.precioN,null); }
     else { closeDetalle(); }
   } else if(currentView==='carta') goResumen();
   else if(currentView==='resumen') goCheckout();
 }
 
 function goResumen(){
-  if(!S.plato) return;
+  if(platosCount()===0) return;
   currentView='resumen';
   ['tab-platos','tab-bebidas','tab-postres','screen-detalle'].forEach(s=>{
     const el=document.getElementById(s); if(el){el.style.display='none';el.classList.remove('active');}
@@ -1065,9 +1061,13 @@ function goResumen(){
   document.getElementById('main-tabs').style.display='none';
   const r=document.getElementById('screen-resumen');
   r.style.display='block'; r.classList.add('active');
-  document.getElementById('res-plato').style.display='flex';
-  document.getElementById('res-plato-n').textContent=S.platoN;
-  document.getElementById('res-plato-p').textContent=fmt(S.platoP);
+  // Render platos dynamically
+  const pc=document.getElementById('res-platos-container');
+  pc.innerHTML='';
+  for(const id in S.platos){
+    const p=S.platos[id];
+    pc.innerHTML+=`<div class="res-item"><div><div class="res-nombre">${p.nombre}</div><div class="res-sub">Plato principal</div></div><div class="res-precio">${fmt(p.price)}</div></div>`;
+  }
   document.getElementById('res-queso').style.display=S.queso?'flex':'none';
   const rb=document.getElementById('res-beb');
   if(S.bebida){rb.style.display='flex';document.getElementById('res-beb-n').textContent=S.bebidaN;document.getElementById('res-beb-p').textContent='+'+fmt(S.bebidaP);}
@@ -1105,8 +1105,9 @@ function goCheckout(){
 function submitEmail(){
   const email=document.getElementById('email-inp').value.trim();
   if(!email||!email.includes('@')){ document.getElementById('email-inp').style.borderColor='#e53e3e'; return; }
-  console.log('LEAD',{email,plato:S.platoN,bebida:S.bebidaN,queso:S.queso,total:total(),ts:new Date().toISOString()});
-  const tag=S.platoN+(S.queso?' + Queso':'')+(S.bebidaN?' + '+S.bebidaN:'');
+  const nombres=Object.values(S.platos).map(p=>p.nombre).join(' + ');
+  console.log('LEAD',{email,platos:S.platos,bebida:S.bebidaN,queso:S.queso,total:total(),ts:new Date().toISOString()});
+  const tag=nombres+(S.queso?' + Queso':'')+(S.bebidaN?' + '+S.bebidaN:'');
   document.getElementById('gracias-tag').textContent='Ibas a pedir: '+tag;
   document.getElementById('screen-checkout').style.display='none';
   document.getElementById('screen-gracias').style.display='block';
