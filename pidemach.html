@@ -281,6 +281,17 @@
     color:var(--naranja); 
     box-shadow: none;
   }
+  /* Qty controls — menu cards */
+  .qty-row { display:flex; align-items:center; gap:0.3rem; }
+  .qty-btn { width:28px; height:28px; border-radius:50%; border:1.5px solid rgba(196,74,26,0.25); background:rgba(196,74,26,0.06); color:var(--naranja); font-size:0.85rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s ease; padding:0; line-height:1; }
+  .qty-btn:hover { background:var(--naranja); color:#fff; }
+  .qty-val { font-size:0.85rem; font-weight:800; color:var(--negro); min-width:20px; text-align:center; }
+  /* Qty controls — resumen */
+  .qty-row-res { display:flex; align-items:center; gap:0.25rem; }
+  .qty-btn-sm { width:24px; height:24px; border-radius:50%; border:1.5px solid rgba(196,74,26,0.2); background:rgba(196,74,26,0.05); color:var(--naranja); font-size:0.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; transition:all 0.15s ease; }
+  .qty-btn-sm:hover { background:var(--naranja); color:#fff; }
+  .qty-val-sm { font-size:0.78rem; font-weight:800; color:var(--negro); min-width:16px; text-align:center; }
+  .res-sub-item { padding-left:1rem; }
   .ver-btn { 
     background:transparent; 
     color:var(--naranja); 
@@ -815,13 +826,9 @@
   </div>
   <div class="resumen-card">
     <div id="res-platos-container"></div>
-    <div class="res-item" id="res-queso" style="display:none">
-      <div><div class="res-nombre">Queso rallado</div><div class="res-sub">Extra</div></div>
-      <div class="res-precio">+1,00€</div>
-    </div>
     <div class="res-item" id="res-beb" style="display:none">
       <div><div class="res-nombre" id="res-beb-n">—</div><div class="res-sub">Bebida</div></div>
-      <div class="res-precio" id="res-beb-p">3,00€</div>
+      <div class="res-precio" id="res-beb-p">2,50€</div>
     </div>
   </div>
   <div class="res-total"><span>Total</span><span id="res-total-v">—</span></div>
@@ -879,7 +886,7 @@
 </div>
 
 <script>
-const S = { platos:{}, queso:false, bebida:null, bebidaN:null, bebidaP:0 };
+const S = { platos:{}, bebida:null, bebidaN:null, bebidaP:0 };
 let currentView = 'carta';
 let pendingPlato = null;
 
@@ -904,19 +911,29 @@ const PLATOS = {
   }
 };
 
-function fmt(n){ return n.toFixed(2).replace('.',',')+'\u20ac'; }
-function platosTotal(){ let t=0; for(const id in S.platos) t+=S.platos[id].price; return t; }
-function total(){ return platosTotal()+(S.queso?1:0)+(S.bebidaP||0); }
-function platosCount(){ return Object.keys(S.platos).length; }
+function fmt(n){ return n.toFixed(2).replace('.',',')+'€'; }
+function platosTotal(){ let t=0; for(const id in S.platos){ const p=S.platos[id]; t+=(p.price+(p.queso?1:0))*p.qty; } return t; }
+function total(){ return platosTotal()+(S.bebidaP||0); }
+function platosCount(){ let c=0; for(const id in S.platos) c+=S.platos[id].qty; return c; }
+function itemsCount(){ let c=0; for(const id in S.platos) c++; if(S.bebida) c++; return c; }
+
+function updateCardButtons(){
+  ['mac','carb','mes'].forEach(id=>{
+    const btnContainer = document.getElementById('btn-'+id).parentElement;
+    if(S.platos[id]){
+      const p=S.platos[id];
+      btnContainer.innerHTML=`<div class="qty-row"><button class="qty-btn" onclick="changeQty('${id}',-1,event)">−</button><span class="qty-val">${p.qty}</span><button class="qty-btn" onclick="changeQty('${id}',1,event)">+</button></div>`;
+    } else {
+      btnContainer.innerHTML=`<button class="ver-btn" onclick="openDetalle('${id}',event)">Ver</button><button class="add-btn" id="btn-${id}" onclick="selectPlato('${id}','${PLATOS[id].nombre}',${PLATOS[id].precioN},event)">Añadir</button>`;
+    }
+  });
+}
 
 function updateCTA(){
   document.getElementById('cta-total').textContent = fmt(total());
   const btn = document.getElementById('cta-btn');
   const lbl = document.getElementById('cta-label');
-  let count = platosCount();
-  if(S.queso) count++;
-  if(S.bebida) count++;
-  document.getElementById('bcount').textContent = count;
+  document.getElementById('bcount').textContent = itemsCount();
   if(currentView==='carta'){
     btn.disabled = platosCount()===0;
     lbl.textContent = platosCount()>0 ? 'Ver pedido' : 'Elige un plato para empezar';
@@ -924,10 +941,8 @@ function updateCTA(){
     btn.disabled = false;
     lbl.textContent = 'Ir a pagar';
   } else if(currentView==='detalle'){
-    const id = window._detalleId;
     btn.disabled = false;
-    lbl.textContent = S.platos[id] ? '✓ Ya en el pedido' : 'Añadir al pedido';
-    document.getElementById('cta-total').textContent = PLATOS[id].precio;
+    lbl.textContent = S.platos[window._detalleId] ? '✓ Ya en el pedido' : 'Añadir al pedido';
   }
 }
 
@@ -942,32 +957,38 @@ function showTab(id, el){
   document.getElementById('main-tabs').style.display='flex';
   document.getElementById('cta-bar').style.display='block';
   currentView='carta';
+  updateCardButtons();
   updateCTA();
   window.scrollTo(0,0);
 }
 
 function selectPlato(id, nombre, price, e){
   if(e) e.stopPropagation();
-
   if(S.platos[id]){
-    // Deselect this plato
     delete S.platos[id];
     document.getElementById('card-'+id).classList.remove('selected');
-    document.getElementById('btn-'+id).textContent='Añadir';
-    document.getElementById('btn-'+id).classList.remove('added');
+    updateCardButtons();
     updateCTA(); return;
   }
-  // Add this plato
-  S.platos[id] = { nombre:nombre, price:price };
+  S.platos[id] = { nombre:nombre, price:price, queso:false, qty:1 };
   document.getElementById('card-'+id).classList.add('selected');
-  document.getElementById('btn-'+id).textContent='✓ Añadido';
-  document.getElementById('btn-'+id).classList.add('added');
-  // Show queso popup only on first plato
-  if(platosCount()===1){
-    pendingPlato = id;
-    abrirPop();
-  }
+  pendingPlato = id;
+  abrirPop();
+  updateCardButtons();
   updateCTA();
+}
+
+function changeQty(id, delta, e){
+  if(e) e.stopPropagation();
+  if(!S.platos[id]) return;
+  S.platos[id].qty = Math.max(0, S.platos[id].qty + delta);
+  if(S.platos[id].qty === 0){
+    delete S.platos[id];
+    document.getElementById('card-'+id).classList.remove('selected');
+  }
+  updateCardButtons();
+  updateCTA();
+  if(currentView==='resumen') renderResumen();
 }
 
 function abrirPop(){
@@ -978,12 +999,12 @@ function cerrarPop(e){
   document.getElementById('queso-pop').classList.remove('open');
 }
 function quesoSi(){
-  S.queso = true;
+  if(pendingPlato && S.platos[pendingPlato]) S.platos[pendingPlato].queso = true;
   document.getElementById('queso-pop').classList.remove('open');
   updateCTA();
 }
 function quesoNo(){
-  S.queso = false;
+  if(pendingPlato && S.platos[pendingPlato]) S.platos[pendingPlato].queso = false;
   document.getElementById('queso-pop').classList.remove('open');
   updateCTA();
 }
@@ -1052,6 +1073,25 @@ function ctaAction(){
   else if(currentView==='resumen') goCheckout();
 }
 
+function renderResumen(){
+  const pc=document.getElementById('res-platos-container');
+  pc.innerHTML='';
+  for(const id in S.platos){
+    const p=S.platos[id];
+    const unitTotal = (p.price+(p.queso?1:0))*p.qty;
+    let html=`<div class="res-item"><div><div class="res-nombre">${p.nombre}</div><div class="res-sub">Plato principal</div></div><div style="display:flex;align-items:center;gap:0.5rem"><div class="qty-row-res"><button class="qty-btn-sm" onclick="changeQty('${id}',-1,null)">−</button><span class="qty-val-sm">${p.qty}</span><button class="qty-btn-sm" onclick="changeQty('${id}',1,null)">+</button></div><div class="res-precio">${fmt(unitTotal)}</div></div></div>`;
+    if(p.queso){
+      html+=`<div class="res-item res-sub-item"><div><div class="res-nombre" style="font-size:0.78rem;color:rgba(30,30,30,0.55)">└ Queso rallado</div></div><div class="res-precio" style="font-size:0.78rem;color:rgba(30,30,30,0.55)">+${fmt(1*p.qty)}</div></div>`;
+    }
+    pc.innerHTML+=html;
+  }
+  const rb=document.getElementById('res-beb');
+  if(S.bebida){rb.style.display='flex';document.getElementById('res-beb-n').textContent=S.bebidaN;document.getElementById('res-beb-p').textContent='+'+fmt(S.bebidaP);}
+  else rb.style.display='none';
+  document.getElementById('res-total-v').textContent=fmt(total());
+  document.getElementById('cta-total').textContent=fmt(total());
+}
+
 function goResumen(){
   if(platosCount()===0) return;
   currentView='resumen';
@@ -1061,21 +1101,9 @@ function goResumen(){
   document.getElementById('main-tabs').style.display='none';
   const r=document.getElementById('screen-resumen');
   r.style.display='block'; r.classList.add('active');
-  // Render platos dynamically
-  const pc=document.getElementById('res-platos-container');
-  pc.innerHTML='';
-  for(const id in S.platos){
-    const p=S.platos[id];
-    pc.innerHTML+=`<div class="res-item"><div><div class="res-nombre">${p.nombre}</div><div class="res-sub">Plato principal</div></div><div class="res-precio">${fmt(p.price)}</div></div>`;
-  }
-  document.getElementById('res-queso').style.display=S.queso?'flex':'none';
-  const rb=document.getElementById('res-beb');
-  if(S.bebida){rb.style.display='flex';document.getElementById('res-beb-n').textContent=S.bebidaN;document.getElementById('res-beb-p').textContent='+'+fmt(S.bebidaP);}
-  else rb.style.display='none';
-  document.getElementById('res-total-v').textContent=fmt(total());
+  renderResumen();
   document.getElementById('cta-btn').disabled=false;
   document.getElementById('cta-label').textContent='Ir a pagar';
-  document.getElementById('cta-total').textContent=fmt(total());
   window.scrollTo(0,0);
 }
 
@@ -1105,9 +1133,10 @@ function goCheckout(){
 function submitEmail(){
   const email=document.getElementById('email-inp').value.trim();
   if(!email||!email.includes('@')){ document.getElementById('email-inp').style.borderColor='#e53e3e'; return; }
-  const nombres=Object.values(S.platos).map(p=>p.nombre).join(' + ');
-  console.log('LEAD',{email,platos:S.platos,bebida:S.bebidaN,queso:S.queso,total:total(),ts:new Date().toISOString()});
-  const tag=nombres+(S.queso?' + Queso':'')+(S.bebidaN?' + '+S.bebidaN:'');
+  const items=Object.values(S.platos).map(p=>p.qty+'x '+p.nombre+(p.queso?' (con queso)':''));
+  const nombres=items.join(' + ');
+  console.log('LEAD',{email,platos:S.platos,bebida:S.bebidaN,total:total(),ts:new Date().toISOString()});
+  const tag=nombres+(S.bebidaN?' + '+S.bebidaN:'');
   document.getElementById('gracias-tag').textContent='Ibas a pedir: '+tag;
   document.getElementById('screen-checkout').style.display='none';
   document.getElementById('screen-gracias').style.display='block';
