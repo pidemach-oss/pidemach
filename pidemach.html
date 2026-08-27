@@ -192,10 +192,10 @@
 
   /* Individual sticker scales to normalize visual sizes */
   #card-mac .plato-thumb img {
-    transform: rotate(-6deg) scale(1.1);
+    transform: rotate(-6deg) scale(0.72);
   }
   #card-mac:hover .plato-thumb img {
-    transform: rotate(3deg) scale(1.18);
+    transform: rotate(3deg) scale(0.78);
   }
 
   #card-carb .plato-thumb img {
@@ -206,10 +206,10 @@
   }
 
   #card-mes .plato-thumb img {
-    transform: rotate(-6deg) scale(1.1);
+    transform: rotate(-6deg) scale(1.12);
   }
   #card-mes:hover .plato-thumb img {
-    transform: rotate(3deg) scale(1.18);
+    transform: rotate(3deg) scale(1.2);
   }
   .plato-card .plato-body { 
     flex:1; 
@@ -616,6 +616,22 @@
   .pop-btn-si { flex:1; background:var(--naranja); color:var(--crema); border:none; border-radius:14px; padding:0.95rem; font-size:0.92rem; font-weight:700; font-family:'Roboto',sans-serif; cursor:pointer; box-shadow: 0 4px 12px rgba(196, 74, 26, 0.15); }
   .pop-btn-no { flex:1; background:rgba(196,74,26,0.08); color:var(--naranja); border:none; border-radius:14px; padding:0.95rem; font-size:0.92rem; font-weight:700; font-family:'Roboto',sans-serif; cursor:pointer; }
   .pop-precio { font-size:0.75rem; opacity:0.8; display:block; margin-top:0.2rem; }
+  .coming-soon-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(196, 74, 26, 0.4);
+    color: var(--crema);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    text-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    border-radius: 0 0 32px 32px;
+  }
 </style>
 </head>
 <body>
@@ -755,6 +771,7 @@
     <button class="back-btn back-btn-abs" onclick="closeDetalle()">←</button>
     <img id="det-img-element" style="display:none;" alt="">
     <div class="detalle-img-ph" id="det-img-ph">mach</div>
+    <div class="coming-soon-overlay" id="det-coming-soon" style="display:none;">PRÓXIMAMENTE</div>
   </div>
   <div class="detalle-body">
     <div class="detalle-nombre" id="det-nombre">—</div>
@@ -887,8 +904,13 @@ function updateCTA(){
     lbl.textContent = 'Ir a pagar';
   } else if(currentView==='detalle'){
     const id = window._detalleId;
-    btn.disabled = false;
-    lbl.textContent = S.plato===id ? '✓ Ya en el pedido' : 'Añadir al pedido';
+    if (id === 'mes') {
+      btn.disabled = true;
+      lbl.textContent = 'No disponible';
+    } else {
+      btn.disabled = false;
+      lbl.textContent = S.plato===id ? '✓ Ya en el pedido' : 'Añadir al pedido';
+    }
     document.getElementById('cta-total').textContent = PLATOS[id].precio;
   }
 }
@@ -910,6 +932,10 @@ function showTab(id, el){
 
 function selectPlato(id, nombre, price, e){
   if(e) e.stopPropagation();
+  if (id === 'mes') {
+    alert("Este plato no está disponible aún.");
+    return;
+  }
   if(S.plato===id){
     S.plato=null; S.platoN=null; S.platoP=0;
     document.getElementById('card-'+id).classList.remove('selected');
@@ -962,6 +988,7 @@ function openDetalle(id, e){
   // Set detail image
   const detImg = document.getElementById('det-img-element');
   const detPh = document.getElementById('det-img-ph');
+  const detCS = document.getElementById('det-coming-soon');
   if (d.img) {
     detImg.src = d.img;
     detImg.style.display = 'block';
@@ -970,6 +997,9 @@ function openDetalle(id, e){
     detImg.src = '';
     detImg.style.display = 'none';
     detPh.style.display = 'block';
+  }
+  if (detCS) {
+    detCS.style.display = (id === 'mes') ? 'flex' : 'none';
   }
 
   ['tab-platos','tab-bebidas','tab-postres'].forEach(s=>{
