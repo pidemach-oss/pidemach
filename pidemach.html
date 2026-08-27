@@ -403,20 +403,13 @@
   .bebida-vol { font-size:0.68rem; color:rgba(30,30,30,0.45); }
   .bebida-precio { font-size:0.95rem; font-weight:800; color:var(--naranja); margin-right:0.5rem; }
   
-  .check-circle { 
-    width:24px; 
-    height:24px; 
-    border-radius:50%; 
-    border:2px solid rgba(196,74,26,0.18); 
-    flex-shrink:0; 
+  .beb-qty-wrap { 
+    min-width:90px; 
     display:flex; 
     align-items:center; 
-    justify-content:center; 
-    font-size:0.7rem; 
-    color:transparent; 
-    transition:all 0.18s; 
+    justify-content:flex-end; 
+    flex-shrink:0; 
   }
-  .bebida-card.selected .check-circle { background:var(--naranja); border-color:var(--naranja); color:white; }
 
   /* POSTRES COMING SOON */
   .coming-soon-wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:55vh; text-align:center; padding:2rem; }
@@ -688,7 +681,7 @@
       </div>
       <div class="plato-footer">
         <div class="plato-precio">9,95€</div>
-        <div style="display:flex;gap:0.4rem;align-items:center;">
+        <div id="btn-wrap-mac" style="display:flex;gap:0.4rem;align-items:center;">
           <button class="ver-btn" onclick="openDetalle('mac',event)">Ver</button>
           <button class="add-btn" id="btn-mac" onclick="selectPlato('mac','Macarrones con chorizo',9.95,event)">Añadir</button>
         </div>
@@ -707,7 +700,7 @@
       </div>
       <div class="plato-footer">
         <div class="plato-precio">9,95€</div>
-        <div style="display:flex;gap:0.4rem;align-items:center;">
+        <div id="btn-wrap-carb" style="display:flex;gap:0.4rem;align-items:center;">
           <button class="ver-btn" onclick="openDetalle('carb',event)">Ver</button>
           <button class="add-btn" id="btn-carb" onclick="selectPlato('carb','La carbonara de verdad',9.95,event)">Añadir</button>
         </div>
@@ -726,7 +719,7 @@
       </div>
       <div class="plato-footer">
         <div class="plato-precio">11,95€</div>
-        <div style="display:flex;gap:0.4rem;align-items:center;">
+        <div id="btn-wrap-mes" style="display:flex;gap:0.4rem;align-items:center;">
           <button class="ver-btn" onclick="openDetalle('mes',event)">Ver</button>
           <button class="add-btn" id="btn-mes" onclick="selectPlato('mes','Pasta del mes',11.95,event)">Añadir</button>
         </div>
@@ -743,49 +736,49 @@
     <div class="bebida-img"><img src="products/coca_cola.png" alt="Coca-Cola"></div>
     <div class="bebida-info"><div class="bebida-nombre">Coca-Cola</div><div class="bebida-vol">Lata 33cl</div></div>
     <div class="bebida-precio">2,50€</div>
-    <div class="check-circle">✓</div>
+    <div class="beb-qty-wrap" id="bqw-cola"></div>
   </div>
 
   <div class="bebida-card" id="beb-zero" onclick="selectBebida('zero','Coca-Cola Zero',2.5)">
     <div class="bebida-img"><img src="products/coca_cola_zero.png" alt="Coca-Cola Zero"></div>
     <div class="bebida-info"><div class="bebida-nombre">Coca-Cola Zero</div><div class="bebida-vol">Lata 33cl</div></div>
     <div class="bebida-precio">2,50€</div>
-    <div class="check-circle">✓</div>
+    <div class="beb-qty-wrap" id="bqw-zero"></div>
   </div>
 
   <div class="bebida-card" id="beb-fanta" onclick="selectBebida('fanta','Fanta Naranja',2.5)">
     <div class="bebida-img"><img src="products/fanta.png" alt="Fanta Naranja"></div>
     <div class="bebida-info"><div class="bebida-nombre">Fanta Naranja</div><div class="bebida-vol">Lata 33cl</div></div>
     <div class="bebida-precio">2,50€</div>
-    <div class="check-circle">✓</div>
+    <div class="beb-qty-wrap" id="bqw-fanta"></div>
   </div>
 
   <div class="bebida-card" id="beb-mahou" onclick="selectBebida('mahou','Mahou',2.5)">
     <div class="bebida-img"><img src="products/mahou.png" alt="Mahou"></div>
     <div class="bebida-info"><div class="bebida-nombre">Mahou</div><div class="bebida-vol">Lata 33cl</div></div>
     <div class="bebida-precio">2,50€</div>
-    <div class="check-circle">✓</div>
+    <div class="beb-qty-wrap" id="bqw-mahou"></div>
   </div>
 
   <div class="bebida-card" id="beb-aquarius" onclick="selectBebida('aquarius','Aquarius Limón',2.5)">
     <div class="bebida-img"><img src="products/aquarius.png" alt="Aquarius Limón"></div>
     <div class="bebida-info"><div class="bebida-nombre">Aquarius Limón</div><div class="bebida-vol">Lata 33cl</div></div>
     <div class="bebida-precio">2,50€</div>
-    <div class="check-circle">✓</div>
+    <div class="beb-qty-wrap" id="bqw-aquarius"></div>
   </div>
 
   <div class="bebida-card" id="beb-nestea" onclick="selectBebida('nestea','Nestea Limón',2.5)">
     <div class="bebida-img"><img src="products/nestea.png" alt="Nestea Limón"></div>
     <div class="bebida-info"><div class="bebida-nombre">Nestea Limón</div><div class="bebida-vol">Lata 33cl</div></div>
     <div class="bebida-precio">2,50€</div>
-    <div class="check-circle">✓</div>
+    <div class="beb-qty-wrap" id="bqw-nestea"></div>
   </div>
 
   <div class="bebida-card" id="beb-agua" onclick="selectBebida('agua','Agua mineral',1.5)">
     <div class="bebida-img"><img src="products/agua.png" alt="Agua mineral"></div>
     <div class="bebida-info"><div class="bebida-nombre">Agua mineral</div><div class="bebida-vol">Botella 50cl</div></div>
     <div class="bebida-precio">1,50€</div>
-    <div class="check-circle">✓</div>
+    <div class="beb-qty-wrap" id="bqw-agua"></div>
   </div>
 </div>
 
@@ -826,10 +819,7 @@
   </div>
   <div class="resumen-card">
     <div id="res-platos-container"></div>
-    <div class="res-item" id="res-beb" style="display:none">
-      <div><div class="res-nombre" id="res-beb-n">—</div><div class="res-sub">Bebida</div></div>
-      <div class="res-precio" id="res-beb-p">2,50€</div>
-    </div>
+    <div id="res-bebidas-container"></div>
   </div>
   <div class="res-total"><span>Total</span><span id="res-total-v">—</span></div>
 </div>
@@ -886,7 +876,7 @@
 </div>
 
 <script>
-const S = { platos:{}, bebida:null, bebidaN:null, bebidaP:0 };
+const S = { platos:{}, bebidas:{} };
 let currentView = 'carta';
 let pendingPlato = null;
 
@@ -913,18 +903,21 @@ const PLATOS = {
 
 function fmt(n){ return n.toFixed(2).replace('.',',')+'€'; }
 function platosTotal(){ let t=0; for(const id in S.platos){ const p=S.platos[id]; t+=(p.price+(p.queso?1:0))*p.qty; } return t; }
-function total(){ return platosTotal()+(S.bebidaP||0); }
+function bebidasTotal(){ let t=0; for(const id in S.bebidas) t+=S.bebidas[id].price*S.bebidas[id].qty; return t; }
+function total(){ return platosTotal()+bebidasTotal(); }
 function platosCount(){ let c=0; for(const id in S.platos) c+=S.platos[id].qty; return c; }
-function itemsCount(){ let c=0; for(const id in S.platos) c++; if(S.bebida) c++; return c; }
+function bebidasCount(){ return Object.keys(S.bebidas).length; }
+function itemsCount(){ let c=Object.keys(S.platos).length+Object.keys(S.bebidas).length; return c; }
 
 function updateCardButtons(){
   ['mac','carb','mes'].forEach(id=>{
-    const btnContainer = document.getElementById('btn-'+id).parentElement;
+    const wrap = document.getElementById('btn-wrap-'+id);
+    if(!wrap) return;
     if(S.platos[id]){
       const p=S.platos[id];
-      btnContainer.innerHTML=`<div class="qty-row"><button class="qty-btn" onclick="changeQty('${id}',-1,event)">−</button><span class="qty-val">${p.qty}</span><button class="qty-btn" onclick="changeQty('${id}',1,event)">+</button></div>`;
+      wrap.innerHTML=`<div class="qty-row"><button class="qty-btn" onclick="changeQty('${id}',-1,event)">−</button><span class="qty-val">${p.qty}</span><button class="qty-btn" onclick="changeQty('${id}',1,event)">+</button></div>`;
     } else {
-      btnContainer.innerHTML=`<button class="ver-btn" onclick="openDetalle('${id}',event)">Ver</button><button class="add-btn" id="btn-${id}" onclick="selectPlato('${id}','${PLATOS[id].nombre}',${PLATOS[id].precioN},event)">Añadir</button>`;
+      wrap.innerHTML=`<button class="ver-btn" onclick="openDetalle('${id}',event)">Ver</button><button class="add-btn" id="btn-${id}" onclick="selectPlato('${id}','${PLATOS[id].nombre}',${PLATOS[id].precioN},event)">Añadir</button>`;
     }
   });
 }
@@ -1058,10 +1051,37 @@ function closeDetalle(){
 }
 
 function selectBebida(id,nombre,price){
-  document.querySelectorAll('.bebida-card').forEach(b=>b.classList.remove('selected'));
-  if(S.bebida===id){ S.bebida=null; S.bebidaN=null; S.bebidaP=0; }
-  else { S.bebida=id; S.bebidaN=nombre; S.bebidaP=price||3; document.getElementById('beb-'+id).classList.add('selected'); }
+  if(S.bebidas[id]){
+    delete S.bebidas[id];
+    document.getElementById('beb-'+id).classList.remove('selected');
+  } else {
+    S.bebidas[id] = {nombre:nombre, price:price, qty:1};
+    document.getElementById('beb-'+id).classList.add('selected');
+  }
+  updateBebidaCards();
   updateCTA();
+}
+function changeBebidaQty(id,delta){
+  if(!S.bebidas[id]) return;
+  S.bebidas[id].qty = Math.max(0, S.bebidas[id].qty + delta);
+  if(S.bebidas[id].qty===0){
+    delete S.bebidas[id];
+    document.getElementById('beb-'+id).classList.remove('selected');
+  }
+  updateBebidaCards();
+  updateCTA();
+  if(currentView==='resumen') renderResumen();
+}
+function updateBebidaCards(){
+  document.querySelectorAll('.beb-qty-wrap').forEach(w=>{
+    const id=w.id.replace('bqw-','');
+    if(S.bebidas[id]){
+      const b=S.bebidas[id];
+      w.innerHTML=`<div class="qty-row"><button class="qty-btn" onclick="changeBebidaQty('${id}',-1);event.stopPropagation()">−</button><span class="qty-val">${b.qty}</span><button class="qty-btn" onclick="changeBebidaQty('${id}',1);event.stopPropagation()">+</button></div>`;
+    } else {
+      w.innerHTML='';
+    }
+  });
 }
 
 function ctaAction(){
@@ -1085,9 +1105,12 @@ function renderResumen(){
     }
     pc.innerHTML+=html;
   }
-  const rb=document.getElementById('res-beb');
-  if(S.bebida){rb.style.display='flex';document.getElementById('res-beb-n').textContent=S.bebidaN;document.getElementById('res-beb-p').textContent='+'+fmt(S.bebidaP);}
-  else rb.style.display='none';
+  const bc=document.getElementById('res-bebidas-container');
+  bc.innerHTML='';
+  for(const id in S.bebidas){
+    const b=S.bebidas[id];
+    bc.innerHTML+=`<div class="res-item"><div><div class="res-nombre">${b.nombre}</div><div class="res-sub">Bebida</div></div><div style="display:flex;align-items:center;gap:0.5rem"><div class="qty-row-res"><button class="qty-btn-sm" onclick="changeBebidaQty('${id}',-1)">−</button><span class="qty-val-sm">${b.qty}</span><button class="qty-btn-sm" onclick="changeBebidaQty('${id}',1)">+</button></div><div class="res-precio">${fmt(b.price*b.qty)}</div></div></div>`;
+  }
   document.getElementById('res-total-v').textContent=fmt(total());
   document.getElementById('cta-total').textContent=fmt(total());
 }
@@ -1134,9 +1157,10 @@ function submitEmail(){
   const email=document.getElementById('email-inp').value.trim();
   if(!email||!email.includes('@')){ document.getElementById('email-inp').style.borderColor='#e53e3e'; return; }
   const items=Object.values(S.platos).map(p=>p.qty+'x '+p.nombre+(p.queso?' (con queso)':''));
-  const nombres=items.join(' + ');
-  console.log('LEAD',{email,platos:S.platos,bebida:S.bebidaN,total:total(),ts:new Date().toISOString()});
-  const tag=nombres+(S.bebidaN?' + '+S.bebidaN:'');
+  const drinks=Object.values(S.bebidas).map(b=>b.qty+'x '+b.nombre);
+  const allItems=[...items,...drinks];
+  console.log('LEAD',{email,platos:S.platos,bebidas:S.bebidas,total:total(),ts:new Date().toISOString()});
+  const tag=allItems.join(' + ');
   document.getElementById('gracias-tag').textContent='Ibas a pedir: '+tag;
   document.getElementById('screen-checkout').style.display='none';
   document.getElementById('screen-gracias').style.display='block';
