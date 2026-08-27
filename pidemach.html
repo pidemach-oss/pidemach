@@ -114,14 +114,20 @@
   .plato-card { 
     background:transparent; 
     border:none;
+    border-bottom: 1px solid rgba(196, 74, 26, 0.08);
     box-shadow:none;
-    margin-bottom:2.2rem; 
+    margin-bottom:1.5rem; 
     display:flex; 
     align-items: center;
-    padding: 0.5rem 0;
+    padding: 0.5rem 0 1.5rem 0;
     cursor:pointer; 
     transition:all 0.25s ease; 
     position:relative; 
+  }
+  .plato-card:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0.5rem;
   }
   .plato-card:hover { 
     transform: translateY(-2px);
@@ -130,51 +136,7 @@
     background: transparent;
   }
 
-  /* FEATURED (HERO) CARD - NO BACKGROUND */
-  .plato-card.featured { 
-    background: transparent; 
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    border-bottom: 1px solid rgba(196, 74, 26, 0.08);
-  }
-  .plato-card.featured::after { display: none; }
-  
-  .plato-card.featured .plato-thumb { 
-    margin: 0;
-  }
-  
-  .plato-card.featured .plato-body {
-    padding: 0 0 0 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-  }
-  .plato-card.featured .plato-nombre {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: var(--negro);
-    letter-spacing: -0.02em;
-    margin-bottom: 0.1rem;
-  }
-  .plato-card.featured .plato-desc-short {
-    font-size: 0.78rem;
-    color: rgba(30, 30, 30, 0.55);
-    line-height: 1.6;
-    margin-bottom: 0.6rem;
-  }
-  .plato-card.featured .plato-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 0.4rem;
-    padding-top: 0.4rem;
-    border-top: 1px solid rgba(196, 74, 26, 0.08);
-  }
-  .plato-card.featured .plato-precio {
-    font-size: 1.25rem;
-    font-weight: 800;
-  }
+
 
 
   /* Plato Meta Badge & Rating */
@@ -691,10 +653,7 @@
       <img src="products/macarrones_sinfondo.png" alt="Macarrones con chorizo">
     </div>
     <div class="plato-body">
-      <div class="plato-meta">
-        <span class="plato-rating">★ 4.9 <span class="rating-val">(120+)</span></span>
-        <span class="plato-time" style="background:rgba(196,74,26,0.15); font-weight:800;">Especialidad</span>
-      </div>
+      <div>
       <div class="plato-nombre">Macarrones con chorizo</div>
       <div class="plato-desc-short">El plato que ningún italiano sabe hacer porque ninguno lo ha probado. Tomate Mutti de primera, chorizo oreado y rigatoni al punto.</div>
       <div class="plato-footer">
