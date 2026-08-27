@@ -345,7 +345,9 @@
   .detalle-subtitulo { font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--naranja); font-weight:800; margin-bottom:0.6rem; }
   .detalle-desc { font-size:0.88rem; color:rgba(30,30,30,0.7); line-height:1.75; }
   .detalle-ingredientes { display:flex; flex-wrap:wrap; gap:0.45rem; margin-top:0.8rem; }
-  .ing-tag { background:rgba(196,74,26,0.08); color:var(--naranja); font-size:0.72rem; font-weight:700; padding:0.35rem 0.85rem; border-radius:24px; }
+  .ing-tag { background:rgba(196,74,26,0.08); color:var(--naranja); font-size:0.72rem; font-weight:700; padding:0.35rem 0.85rem; border-radius:24px; cursor:pointer; transition: all 0.2s ease; user-select:none; border:1.5px solid transparent; }
+  .ing-tag:hover { border-color: rgba(196,74,26,0.2); }
+  .ing-tag.removed { background:rgba(30,30,30,0.04); color:rgba(30,30,30,0.3); text-decoration:line-through; border-color:transparent; }
 
   /* BEBIDAS */
   .bebida-card { 
@@ -779,7 +781,7 @@
     <div class="detalle-subtitulo">El plato</div>
     <div class="detalle-desc" id="det-desc">—</div>
     <div class="detalle-sep"></div>
-    <div class="detalle-subtitulo">Ingredientes</div>
+    <div class="detalle-subtitulo">Quitar ingredientes</div>
     <div class="detalle-ingredientes" id="det-ings"></div>
   </div>
 </div>
@@ -975,7 +977,7 @@ function openDetalle(id, e){
   document.getElementById('det-nombre').textContent = d.nombre;
   document.getElementById('det-precio').textContent = d.precio;
   document.getElementById('det-desc').textContent = d.desc;
-  document.getElementById('det-ings').innerHTML = d.ings.map(i=>`<span class="ing-tag">${i}</span>`).join('');
+  document.getElementById('det-ings').innerHTML = d.ings.map(i=>`<span class="ing-tag" onclick="this.classList.toggle('removed')">${i}</span>`).join('');
   
   // Set detail image
   const detImg = document.getElementById('det-img-element');
