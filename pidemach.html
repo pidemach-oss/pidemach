@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mach · Pide mach</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Roboto:wght@300;400;500;700;900&display=swap');
+  :root { --naranja:#C44A1A; --crema:#FAF5EE; --negro:#1E1E1E; }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  body { 
+    background:var(--crema); 
+    color:var(--negro); 
+    font-family:'Roboto',sans-serif; 
+    min-height:100vh; 
+    max-width:480px; 
+    margin:0 auto; 
+    position:relative;
+    overflow-x:hidden;
+    background-image: 
+      radial-gradient(circle at 0% 10%, rgba(196, 74, 26, 0.04) 0%, transparent 45%),
+      radial-gradient(circle at 100% 70%, rgba(196, 74, 26, 0.04) 0%, transparent 45%);
+    background-attachment: fixed;
+  }
+
+  /* HEADER */
+  header { 
+    background:rgba(250, 245, 238, 0.95); 
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    padding:1.2rem 1.2rem 0.5rem; 
+    position:sticky; 
+    top:0; 
+    z-index:200; 
+    border-bottom: 1px solid rgba(196, 74, 26, 0.06);
+  }
+  .header-top { display:flex; align-items:center; justify-content:space-between; padding-bottom:0.8rem; }
+  .logo { font-family:'Pacifico',cursive; font-size:1.9rem; color:var(--naranja); line-height:1; display:flex; align-items:center; }
+  .logo-svg { display:inline-block; width:84px; height:32px; fill:currentColor; }
+  .cs-logo-svg { width:220px; height:83px; }
+  .checkout-logo-svg { width:60px; height:23px; }
+  .big-logo-svg { width:280px; height:106px; }
+  
+  .cart-icon { width:16px; height:16px; stroke:currentColor; stroke-width:2.5; fill:none; display:inline-block; }
+  .basket-btn { 
+    background:rgba(196, 74, 26, 0.08); 
+    border:1px solid rgba(196, 74, 26, 0.15); 
+    color:var(--naranja); 
+    font-family:'Roboto',sans-serif; 
+    font-size:0.8rem; 
+    font-weight:700; 
+    padding:0.5rem 1rem; 
+    border-radius:24px; 
+    cursor:pointer; 
+    display:flex; 
+    align-items:center; 
+    gap:0.4rem; 
+    transition: all 0.2s ease;
+  }
+  .basket-btn:hover {
+    background:rgba(196, 74, 26, 0.15);
+  }
+  .basket-count { 
+    background:var(--naranja); 
+    color:var(--crema); 
+    border-radius:50%; 
+    width:18px; 
+    height:18px; 
+    font-size:0.65rem; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    font-weight:700; 
+  }
+
+  /* TABS (PILLS STYLE) */
+  .tabs { display:flex; overflow-x:auto; scrollbar-width:none; gap: 0.5rem; padding: 0.2rem 0; }
+  .tabs::-webkit-scrollbar { display:none; }
+  .tab { 
+    flex-shrink:0; 
+    padding:0.55rem 1.1rem; 
+    font-size:0.82rem; 
+    font-weight:700; 
+    color:rgba(30, 30, 30, 0.45); 
+    cursor:pointer; 
+    border-radius: 20px;
+    transition:all 0.2s; 
+  }
+  .tab.active { 
+    color:var(--crema); 
+    background:var(--naranja); 
+    box-shadow: 0 4px 12px rgba(196, 74, 26, 0.2);
+  }
+
+  /* SCREENS */
+  .screen { display:none; padding:1.2rem 1.2rem 120px; }
+  .screen.active { display:block; }
+
+  /* SECTION LABEL */
+  .slabel { 
+    font-size:0.65rem; 
+    letter-spacing:0.2em; 
+    text-transform:uppercase; 
+    color:var(--naranja); 
+    font-weight:800; 
+    padding:0.5rem 0 1rem; 
+    display:flex; 
+    align-items:center; 
+    gap:0.7rem; 
+  }
+  .slabel::after { content:''; flex:1; height:1px; background:rgba(196,74,26,0.1); }
+
+  /* PLATO CARD (STICKER / NO CARD LAYOUT) */
+  .plato-card { 
+    background:transparent; 
+    border:none;
+    box-shadow:none;
+    margin-bottom:2.2rem; 
+    display:flex; 
+    align-items: center;
+    padding: 0.5rem 0;
+    cursor:pointer; 
+    transition:all 0.25s ease; 
+    position:relative; 
+  }
+  .plato-card:hover { 
+    transform: translateY(-2px);
+  }
+  .plato-card.selected {
+    background: transparent;
+  }
+
+  /* FEATURED (HERO) CARD - NO BACKGROUND */
+  .plato-card.featured { 
+    flex-direction: column;
+    align-items: stretch;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0 0 1.5rem 0;
+    box-shadow: none;
+    border-bottom: 1px solid rgba(196, 74, 26, 0.08);
+  }
+  .plato-card.featured::after { display: none; }
+  
+  .plato-card.featured .plato-thumb { 
+    width:210px; 
+    height:210px; 
+    margin:0.2rem auto 1.4rem;
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    position: relative;
+    transition: transform 0.3s ease;
+  }
+  
+  .plato-card.featured .plato-body {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .plato-card.featured .plato-nombre {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--negro);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.1rem;
+  }
+  .plato-card.featured .plato-desc-short {
+    font-size: 0.78rem;
+    color: rgba(30, 30, 30, 0.55);
+    line-height: 1.6;
+    margin-bottom: 0.6rem;
+  }
+  .plato-card.featured .plato-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+    border-top: 1px solid rgba(196, 74, 26, 0.08);
+  }
+  .plato-card.featured .plato-precio {
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+  .plato-card.featured .plato-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: rotate(-6deg);
+    filter: drop-shadow(0 10px 18px rgba(0,0,0,0.15));
+    transition: transform 0.3s ease;
+  }
+  .plato-card.featured:hover .plato-thumb img {
+    transform: scale(1.06) rotate(4deg);
+  }
+
+  /* Plato Meta Badge & Rating */
+  .plato-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+  .plato-rating {
+    color: #F5A623;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+  .rating-val {
+    color: var(--negro);
+    opacity: 0.8;
+  }
+  .plato-time {
+    background: rgba(196, 74, 26, 0.08);
+    color: var(--naranja);
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+
+  /* STANDARD CARD SPECIFICS */
+  .plato-card:not(.featured) .plato-thumb { 
+    width:135px; 
+    height:135px; 
+    flex-shrink:0; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    position: relative;
+    overflow: visible;
+  }
+  .plato-card:not(.featured) .plato-thumb img { 
+    width:115%; 
+    height:115%; 
+    object-fit:contain; 
+    transform: rotate(-5deg);
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.12));
+    transition: transform 0.3s ease;
+  }
+  .plato-card:not(.featured):hover .plato-thumb img {
+    transform: scale(1.08) rotate(3deg);
+  }
+  
+  /* Selected overlay drop shadow glow */
+  .plato-card.selected .plato-thumb img {
+    filter: drop-shadow(0 0 12px rgba(196, 74, 26, 0.45)) drop-shadow(0 8px 16px rgba(0,0,0,0.15));
+  }
+  .plato-card.selected.featured .plato-thumb img {
+    filter: drop-shadow(0 0 14px rgba(196, 74, 26, 0.5)) drop-shadow(0 10px 20px rgba(0,0,0,0.18));
+  }
+  .plato-card:not(.featured) .plato-body { 
+    flex:1; 
+    padding:0 0 0 1rem; 
+    display:flex; 
+    flex-direction:column; 
+    justify-content:space-between; 
+  }
+  .plato-card[style*="row-reverse"] .plato-body {
+    padding:0 1rem 0 0;
+  }
+  .plato-card:not(.featured) .plato-nombre { 
+    font-size:0.95rem; 
+    font-weight:700; 
+    color:var(--negro); 
+    margin-bottom:0.2rem; 
+    line-height:1.2; 
+  }
+  .plato-card:not(.featured) .plato-desc-short { 
+    font-size:0.72rem; 
+    color:rgba(30,30,30,0.5); 
+    line-height:1.5; 
+    margin-bottom:0.5rem; 
+  }
+  .plato-card:not(.featured) .plato-footer { 
+    display:flex; 
+    align-items:center; 
+    justify-content:space-between; 
+  }
+  .plato-card:not(.featured) .plato-precio { 
+    font-size:1.05rem; 
+    font-weight:800; 
+    color:var(--naranja); 
+  }
+
+  .mes-badge { 
+    display:inline-block; 
+    background:rgba(196,74,26,0.08); 
+    color:var(--naranja); 
+    font-size:0.55rem; 
+    font-weight:700; 
+    letter-spacing:0.05em; 
+    text-transform:uppercase; 
+    padding:2px 6px; 
+    border-radius:6px; 
+    margin-left:0.3rem; 
+  }
+  
+  /* ACTION BUTTONS */
+  .add-btn { 
+    background:var(--naranja); 
+    color:var(--crema); 
+    border:none; 
+    border-radius:24px; 
+    padding:0.45rem 1.1rem; 
+    font-size:0.75rem; 
+    font-weight:700; 
+    cursor:pointer; 
+    font-family:'Roboto',sans-serif; 
+    box-shadow: 0 4px 12px rgba(196, 74, 26, 0.15);
+    transition: all 0.2s; 
+  }
+  .add-btn:hover { 
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(196, 74, 26, 0.25);
+  }
+  .add-btn.added { 
+    background:rgba(196,74,26,0.1); 
+    color:var(--naranja); 
+    box-shadow: none;
+  }
+  .ver-btn { 
+    background:transparent; 
+    color:var(--naranja); 
+    border:1.5px solid rgba(196,74,26,0.22); 
+    border-radius:24px; 
+    padding:0.4rem 0.9rem; 
+    font-size:0.7rem; 
+    font-weight:700; 
+    cursor:pointer; 
+    font-family:'Roboto',sans-serif; 
+    margin-right:0.4rem; 
+    transition: all 0.2s;
+  }
+  .ver-btn:hover {
+    border-color:var(--naranja);
+    background: rgba(196, 74, 26, 0.03);
+  }
+
+  /* DETALLE */
+  #screen-detalle { display:none; padding:0 0 120px; }
+  #screen-detalle.active { display:block; }
+  .detalle-img { 
+    width:100%; 
+    height:280px; 
+    background:rgba(196,74,26,0.05); 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    overflow:hidden; 
+    position:relative; 
+    border-radius: 0 0 32px 32px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.03);
+  }
+  .detalle-img img { 
+    width:100%; 
+    height:100%; 
+    object-fit:cover; 
+  }
+  .detalle-img-ph { font-family:'Pacifico',cursive; font-size:2rem; color:rgba(196,74,26,0.2); }
+  .back-btn { 
+    background:rgba(250,245,238,0.92); 
+    border:none; 
+    border-radius:50%; 
+    width:40px; 
+    height:40px; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    cursor:pointer; 
+    font-size:1.15rem; 
+    box-shadow:0 3px 12px rgba(0,0,0,0.08); 
+    transition: all 0.2s;
+  }
+  .back-btn:hover {
+    transform: scale(1.05);
+  }
+  .back-btn-abs { position:absolute; top:1.2rem; left:1.2rem; z-index:10; }
+  .detalle-body { padding:1.5rem 1.3rem; }
+  .detalle-nombre { font-size:1.45rem; font-weight:800; color:var(--negro); margin-bottom:0.4rem; line-height:1.2; letter-spacing: -0.02em; }
+  .detalle-precio { font-size:1.25rem; font-weight:800; color:var(--naranja); margin-bottom:1.2rem; }
+  .detalle-sep { height:1px; background:rgba(196,74,26,0.08); margin:1.2rem 0; }
+  .detalle-subtitulo { font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--naranja); font-weight:800; margin-bottom:0.6rem; }
+  .detalle-desc { font-size:0.88rem; color:rgba(30,30,30,0.7); line-height:1.75; }
+  .detalle-ingredientes { display:flex; flex-wrap:wrap; gap:0.45rem; margin-top:0.8rem; }
+  .ing-tag { background:rgba(196,74,26,0.08); color:var(--naranja); font-size:0.72rem; font-weight:700; padding:0.35rem 0.85rem; border-radius:24px; }
+
+  /* BEBIDAS */
+  .bebida-card { 
+    background:white; 
+    border-radius:22px; 
+    margin-bottom:0.75rem; 
+    display:flex; 
+    align-items:center; 
+    gap:0.9rem; 
+    padding:0.75rem 1rem; 
+    border:1px solid rgba(196,74,26,0.05); 
+    cursor:pointer; 
+    box-shadow: 0 6px 18px rgba(196, 74, 26, 0.02), 0 2px 6px rgba(0,0,0,0.01);
+    transition:all 0.2s; 
+  }
+  .bebida-card:hover { 
+    transform: translateY(-1px);
+    border-color:rgba(196,74,26,0.15); 
+    box-shadow: 0 10px 24px rgba(196, 74, 26, 0.05);
+  }
+  .bebida-card.selected { 
+    border-color:var(--naranja); 
+    background:rgba(196,74,26,0.01); 
+  }
+  .bebida-img { 
+    width:56px; 
+    height:56px; 
+    flex-shrink:0; 
+    background:white; 
+    border-radius:14px; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    overflow:hidden; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    border: 1px solid rgba(196, 74, 26, 0.04);
+  }
+  .bebida-img img { width:100%; height:100%; object-fit:contain; }
+  .bebida-ph { font-size:1.5rem; }
+  .bebida-info { flex:1; }
+  .bebida-nombre { font-size:0.9rem; font-weight:700; color: var(--negro); }
+  .bebida-vol { font-size:0.68rem; color:rgba(30,30,30,0.45); }
+  .bebida-precio { font-size:0.95rem; font-weight:800; color:var(--naranja); margin-right:0.5rem; }
+  
+  .check-circle { 
+    width:24px; 
+    height:24px; 
+    border-radius:50%; 
+    border:2px solid rgba(196,74,26,0.18); 
+    flex-shrink:0; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    font-size:0.7rem; 
+    color:transparent; 
+    transition:all 0.18s; 
+  }
+  .bebida-card.selected .check-circle { background:var(--naranja); border-color:var(--naranja); color:white; }
+
+  /* POSTRES COMING SOON */
+  .coming-soon-wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:55vh; text-align:center; padding:2rem; }
+  .coming-soon-wrap .cs-logo { font-family:'Pacifico',cursive; font-size:3rem; color:var(--naranja); margin-bottom:1.2rem; }
+  .coming-soon-wrap h2 { font-size:1.3rem; font-weight:800; color:var(--negro); margin-bottom:0.6rem; letter-spacing:-0.02em; }
+  .coming-soon-wrap p { font-size:0.84rem; color:rgba(30,30,30,0.48); line-height:1.65; max-width:270px; }
+  .cs-badge { 
+    display:inline-block; 
+    background:rgba(196,74,26,0.08); 
+    color:var(--naranja); 
+    font-size:0.62rem; 
+    font-weight:700; 
+    letter-spacing:0.15em; 
+    text-transform:uppercase; 
+    padding:0.45rem 1rem; 
+    border-radius:20px; 
+    margin-bottom:1.2rem; 
+  }
+
+  /* RESUMEN */
+  .resumen-header { display:flex; align-items:center; gap:0.7rem; padding:0.8rem 0 0.3rem; }
+  .resumen-card { 
+    background:white; 
+    border-radius:24px; 
+    overflow:hidden; 
+    border:1px solid rgba(196,74,26,0.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.015);
+  }
+  .res-item { display:flex; justify-content:space-between; align-items:center; padding:1.1rem 1.3rem; border-bottom:1px solid rgba(196,74,26,0.06); }
+  .res-item:last-child { border-bottom:none; }
+  .res-nombre { font-size:0.92rem; font-weight:700; color: var(--negro); }
+  .res-sub { font-size:0.68rem; color:rgba(30,30,30,0.4); }
+  .res-precio { font-size:1rem; font-weight:800; color:var(--naranja); }
+  
+  .res-total { 
+    background:var(--naranja); 
+    color:var(--crema); 
+    border-radius:22px; 
+    padding:1.1rem 1.3rem; 
+    display:flex; 
+    justify-content:space-between; 
+    font-weight:700; 
+    font-size:1.05rem; 
+    margin-top:1rem; 
+    box-shadow: 0 10px 24px rgba(196, 74, 26, 0.22);
+  }
+
+  /* CHECKOUT */
+  .checkout-wrap { min-height:70vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem 1.3rem; }
+  .checkout-logo-circle { 
+    color:var(--crema); 
+    background:var(--naranja); 
+    width:96px; 
+    height:96px; 
+    border-radius:50%; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    margin:0 auto 1.8rem; 
+    box-shadow: 0 10px 24px rgba(196, 74, 26, 0.25);
+  }
+  .checkout-wrap h2 { font-size:1.45rem; font-weight:800; margin-bottom:0.85rem; line-height:1.2; letter-spacing: -0.02em; }
+  .checkout-wrap .sub { font-size:0.86rem; color:rgba(30,30,30,0.52); line-height:1.7; margin-bottom:2rem; max-width:310px; }
+  
+  .email-input { 
+    width:100%; 
+    max-width:340px; 
+    background:white; 
+    border:1.5px solid rgba(196,74,26,0.18); 
+    border-radius:14px; 
+    padding:0.95rem 1.1rem; 
+    font-size:0.95rem; 
+    font-family:'Roboto',sans-serif; 
+    color:var(--negro); 
+    outline:none; 
+    margin-bottom:0.75rem; 
+    display:block; 
+    transition: all 0.2s;
+  }
+  .email-input:focus { border-color:var(--naranja); box-shadow: 0 0 0 3px rgba(196, 74, 26, 0.1); }
+  .email-input::placeholder { color:rgba(30,30,30,0.3); }
+  
+  .submit-btn { 
+    width:100%; 
+    max-width:340px; 
+    background:var(--naranja); 
+    color:var(--crema); 
+    border:none; 
+    border-radius:14px; 
+    padding:1rem; 
+    font-size:0.92rem; 
+    font-weight:700; 
+    font-family:'Roboto',sans-serif; 
+    cursor:pointer; 
+    display:block; 
+    box-shadow: 0 6px 18px rgba(196, 74, 26, 0.2);
+    transition: all 0.2s;
+  }
+  .submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(196, 74, 26, 0.3);
+  }
+  .disclaimer { font-size:0.62rem; color:rgba(30,30,30,0.35); margin-top:0.75rem; }
+
+  /* GRACIAS */
+  .gracias-wrap { min-height:70vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem 1.3rem; }
+  .big-logo { font-family:'Pacifico',cursive; font-size:4rem; color:var(--naranja); margin-bottom:1rem; }
+  .gracias-wrap h2 { font-size:1.45rem; font-weight:800; margin-bottom:0.75rem; letter-spacing: -0.02em; }
+  .gracias-wrap p { font-size:0.86rem; color:rgba(30,30,30,0.5); line-height:1.7; max-width:295px; }
+  .pedido-tag { 
+    background:rgba(196,74,26,0.06); 
+    border:1px solid rgba(196,74,26,0.15); 
+    border-radius:12px; 
+    padding:0.75rem 1.2rem; 
+    margin:1.2rem 0; 
+    font-size:0.8rem; 
+    color:var(--naranja); 
+    font-weight:700; 
+  }
+  .ig-btn { 
+    display:inline-block; 
+    background:var(--naranja); 
+    color:var(--crema); 
+    text-decoration:none; 
+    padding:0.85rem 1.8rem; 
+    border-radius:14px; 
+    font-size:0.85rem; 
+    font-weight:700; 
+    margin-top:1.6rem; 
+    box-shadow: 0 6px 18px rgba(196, 74, 26, 0.2);
+    transition: all 0.2s;
+  }
+  .ig-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(196, 74, 26, 0.3);
+  }
+
+  /* FLOATING CTA BAR */
+  .cta-bar { 
+    position:fixed; 
+    bottom:1.5rem; 
+    left:50%; 
+    transform:translateX(-50%); 
+    width: calc(100% - 2.4rem); 
+    max-width:432px; 
+    background:transparent; 
+    padding:0; 
+    z-index:150; 
+  }
+  .cta-btn { 
+    width:100%; 
+    background:var(--naranja); 
+    color:var(--crema); 
+    border:none; 
+    border-radius:30px; 
+    padding:0.75rem 0.75rem 0.75rem 1.5rem; 
+    font-size:0.95rem; 
+    font-weight:700; 
+    font-family:'Roboto',sans-serif; 
+    cursor:pointer; 
+    display:flex; 
+    align-items:center; 
+    justify-content:space-between; 
+    box-shadow: 0 10px 28px rgba(196, 74, 26, 0.35);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+  }
+  .cta-btn:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 14px 32px rgba(196, 74, 26, 0.45); 
+  }
+  .cta-btn:disabled { 
+    opacity:0.4; 
+    cursor:not-allowed; 
+    transform: none; 
+    box-shadow: none; 
+  }
+  .cta-right-accent {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .cta-arrow-circle {
+    width: 36px;
+    height: 36px;
+    background: white;
+    color: var(--naranja);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+  }
+  .cta-btn:hover .cta-arrow-circle {
+    transform: translateX(2px);
+  }
+
+  /* ── QUESO POP ── */
+  .pop-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:500; display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.25s; }
+  .pop-overlay.open { opacity:1; pointer-events:all; }
+  .pop-sheet { background:var(--crema); border-radius:24px 24px 0 0; width:100%; max-width:480px; padding:1.6rem 1.4rem 2.4rem; transform:translateY(100%); transition:transform 0.3s cubic-bezier(0.34,1.2,0.64,1); }
+  .pop-overlay.open .pop-sheet { transform:translateY(0); }
+  .pop-handle { width:40px; height:4px; background:rgba(30,30,30,0.12); border-radius:2px; margin:0 auto 1.3rem; }
+  .pop-icon { font-size:2.5rem; text-align:center; margin-bottom:0.6rem; }
+  .pop-title { font-size:1.15rem; font-weight:800; text-align:center; margin-bottom:0.35rem; letter-spacing: -0.02em; }
+  .pop-sub { font-size:0.8rem; color:rgba(30,30,30,0.5); text-align:center; margin-bottom:1.4rem; line-height:1.5; }
+  .pop-btns { display:flex; gap:0.7rem; }
+  .pop-btn-si { flex:1; background:var(--naranja); color:var(--crema); border:none; border-radius:14px; padding:0.95rem; font-size:0.92rem; font-weight:700; font-family:'Roboto',sans-serif; cursor:pointer; box-shadow: 0 4px 12px rgba(196, 74, 26, 0.15); }
+  .pop-btn-no { flex:1; background:rgba(196,74,26,0.08); color:var(--naranja); border:none; border-radius:14px; padding:0.95rem; font-size:0.92rem; font-weight:700; font-family:'Roboto',sans-serif; cursor:pointer; }
+  .pop-precio { font-size:0.75rem; opacity:0.8; display:block; margin-top:0.2rem; }
+</style>
+</head>
+<body>
+<svg style="display: none;">
+  <symbol id="mach-logo" viewBox="0 0 591.44 224.08">
+    <path fill="currentColor" d="M559.62.9c3.82,2.41,6.56,4.67,8,9,3.56,33.97-28.13,70.51-46.62,96.51-.5.7-.99,1.4-1.5,2.12-.49.69-.98,1.37-1.48,2.08-7.19,10.17-13.81,20.72-20.39,31.29.33.33.66.66,1,1q8.61-8.37,16.69-17.25c6.44-7.5,14.23-16.12,24.66-16.93,5.71.3,8.7,2.14,12.65,6.18,4.13,8.25.2,20.81-1.57,29.36-1.7,8.41-2.29,16.2-.43,24.64,5.81-.32,9.52-1.57,14.5-4.52,2.85-1.69,5.75-3.26,8.68-4.79.96-.51,1.93-1.02,2.92-1.55,3.23-1.27,5.45-1.5,8.89-1.14,3.41,2.45,4.75,4.05,5.81,8.12-2.91,13.88-17.82,23.93-29.03,31.32-11.74,7.5-22.49,12.98-36.79,11.56-4.08-1.51-7.07-3.32-9.2-7.17q-.39-.9-.8-1.83h-2c-2.72-9.59-3.37-18.12-3-28-10.48,6.03-18.43,14.94-26.25,24.01-8.06,9.15-19.23,21.13-31.85,23.36-3.65.12-5.53-.07-8.4-2.37-2.39-4.78-2.27-8.57-.7-13.53,1.46-3.75,3.12-7.32,4.95-10.91q1.47-2.54,1.25-5.56c-4.58,2.45-8.77,5.23-13,8.25-22.04,15.45-48.31,25.66-75.52,21.17-8.93-2.8-16.06-9.4-20.6-17.48-.65-1.3-1.28-2.61-1.88-3.94-4.66,1.44-7.6,4.16-11,7.5s-6.34,6.06-11,7.5v2q-18.17,8.14-27.25,5.3c-4.78-2.07-7.31-4.6-9.75-9.3-1-3.13-1.11-5.97-1.06-9.25,0-.89.02-1.78.03-2.7q.02-1.01.04-2.05c-3.88,1.86-7.55,3.92-11.2,6.21-12.03,7.52-23.4,11.94-37.74,12.04q-1.16.03-2.34.06c-6.62.04-11.24-1.28-16.47-5.56-5.52-6.74-5.85-13.28-6.25-21.75-2.03,1.39-4.06,2.78-6.1,4.17-1.74,1.19-3.48,2.38-5.22,3.57-3.82,2.61-7.64,5.22-11.42,7.89-15.38,10.82-32.61,22.36-52.27,20.38-4.21-1.7-6.54-4.21-9-8-.47-2.79-.38-5.49-.25-8.31.02-.74.04-1.48.05-2.24.05-1.82.12-3.63.2-5.44-.33.66-.66,1.32-1,2-1.66,1.01-3.33,2.01-5,3-1.5,1.18-2.98,2.39-4.44,3.62-10.56,8.54-22.95,18.38-37.1,17.91-2.78-.6-3.76-1.26-5.59-3.41-2.67-4.45-2.99-6.55-2.94-11.75,0-1.19.02-2.38.03-3.6.01-.92.02-1.83.04-2.77q-1.05.76-2.12,1.53c-.91.65-1.82,1.3-2.76,1.97q-1.36.97-2.74,1.97-2.38,1.53-4.38,1.53v2c-2,1.6-4.15,2.9-6.31,4.27-1.81,1.16-3.58,2.38-5.31,3.64-6.52,4.61-12.27,6.96-20.38,6.09-3.13-1.78-4.42-2.83-6-6-1.38-9.73,1.84-18.98,4.54-28.2q.54-1.81.46-3.8c-.57,0-1.14,0-1.72,0-5.53-.28-8.84-1.37-12.84-5.25-3.1-3.74-4.21-7.47-5.07-12.18.93-5.31,3.93-7.79,7.62-11.56,1.28-1.41,2.55-2.82,3.82-4.23,4.92-5.46,10.03-10.71,15.3-15.85,2.26-2.22,4.12-4.27,5.88-6.92h2v-2c2.47-2.55,5.27-4.74,8-7,.81-.68,1.61-1.36,2.44-2.06q14.65-12.1,24.56-11.94c2.86,1.76,4.5,3,6,6,.59,8.63-3.38,16.04-6.91,23.62-2.04,4.47-3.97,8.99-5.9,13.5-.38.89-.77,1.78-1.17,2.69-1.87,4.35-3.62,8.66-5.02,13.18,4.15-3.81,6.9-7.79,9.75-12.62,4.23-6.96,8.86-13.25,14.25-19.38.75-.86,1.51-1.72,2.28-2.61,2.21-2.49,4.45-4.95,6.72-7.39.68-.73,1.36-1.47,2.06-2.23,6.08-6.34,11.03-10.98,20.12-11.4,4.2.17,5.51.4,9,2.94,3.4,5.04,3.51,9.79,2.81,15.69-1.05,4.04-2.48,7.95-3.91,11.88q-1.2,2.89-1.09,5.12c.46-.85.92-1.7,1.4-2.57q17.59-31.84,31.5-37.84c5.71-1.61,11.1-1.34,16.54,1.04,3.71,2.14,5.28,4.21,6.56,8.38,1.05,9.59-2.02,19.67-4.69,28.81-2.09,7.92-1.56,16.07-1.31,24.19,16.37-2.68,30.54-14.51,43.89-23.88,2.94-2.01,5.94-3.89,8.98-5.75,3.28-2.04,5.87-4,8.44-6.88,6.97-7.48,17.52-11.2,27.5-11.69,7.65.15,13.6,2.04,20.05,6.16,2.66,1.27,4.23,1.46,7.14,1.02q2.15-1.51,4-3.62c.69-.73,1.39-1.47,2.11-2.22,1.48-1.68,2.86-3.43,4.21-5.21,4.88-5.33,11.16-9.93,18.44-11.06,4.43-.18,7.42.94,11.25,3.12,2.7,4.04,2.58,7.33,2,12-1.21,4.77-2.78,9.41-4.37,14.06q-5.06,13.9-6.75,28.44c.02,1.04.04,2.08.05,3.16.02.77.05,1.55.07,2.34,5.51-1.13,8.54-4.03,12.52-7.73,2.54-2.32,5.17-4.44,7.86-6.58,7.3-5.93,13.99-12.5,20.06-19.69,14.19-16.45,34.04-29.34,56.15-31.22,2.7-.12,5.4-.15,8.1-.16.91-.02,1.82-.05,2.76-.07,5.75-.03,8.97.66,13.55,4.45.99.66,1.98,1.32,3,2,4.26,12.77-2.37,26.13-7.94,37.5-3.17,6.23-6.25,12.06-12.31,15.94-5.83,1.19-10.85,1.51-16.25-1.19-2.44-2.2-3.44-3.22-4.5-6.25q.24-3.02.88-6.25.31-1.62.62-3.27c.17-.82.34-1.64.51-2.48-7.29.32-13.55,3.49-18.68,8.71-4.71,6.17-5.85,12.45-4.86,20.05.75,3.12,1.88,4.46,4.54,6.24,9.03,4.24,18.62,2.35,27.69-.88,5.1-1.93,9.71-4.2,14.31-7.12,1.08-.66,2.16-1.32,3.27-2,7.73-4.79,14.93-9.95,21.73-16,.93-.81,1.86-1.62,2.82-2.46,21.8-19.88,34.76-49.75,48.47-75.35Q540.74-2.08,559.62.9ZM261.71,157.77c-8.11,5.46-16.28,11.9-20.09,21.14v4c6.09-.54,9.36-4.14,13.21-8.5,4.4-5.27,8.33-10.58,11.79-16.5q-2.85-1.33-4.91-.14Z"/>
+  </symbol>
+</svg>
+
+<header>
+  <div class="header-top">
+    <div class="logo"><svg class="logo-svg"><use href="#mach-logo"/></svg></div>
+    <button class="basket-btn" onclick="goResumen()">
+      <svg class="cart-icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+      </svg>
+      Pedido <span class="basket-count" id="bcount">0</span>
+    </button>
+  </div>
+  <div class="tabs" id="main-tabs">
+    <div class="tab active" onclick="showTab('platos',this)">Platos</div>
+    <div class="tab" onclick="showTab('bebidas',this)">Bebidas</div>
+    <div class="tab" onclick="showTab('postres',this)">Postres</div>
+  </div>
+</header>
+
+<!-- ══ PLATOS ══ -->
+<div class="screen active" id="tab-platos">
+  <div class="slabel">Platos principales</div>
+
+  <div class="plato-card featured" id="card-mac">
+    <div class="plato-thumb">
+      <img src="products/macarrones_sinfondo.png" alt="Macarrones con chorizo">
+    </div>
+    <div class="plato-body">
+      <div class="plato-meta">
+        <span class="plato-rating">★ 4.9 <span class="rating-val">(120+)</span></span>
+        <span class="plato-time" style="background:rgba(196,74,26,0.15); font-weight:800;">Especialidad</span>
+      </div>
+      <div class="plato-nombre">Macarrones con chorizo</div>
+      <div class="plato-desc-short">El plato que ningún italiano sabe hacer porque ninguno lo ha probado. Tomate Mutti de primera, chorizo oreado y rigatoni al punto.</div>
+      <div class="plato-footer">
+        <div class="plato-precio">9,95€</div>
+        <div style="display:flex;gap:0.4rem;align-items:center;">
+          <button class="ver-btn" onclick="openDetalle('mac',event)">Ver</button>
+          <button class="add-btn" id="btn-mac" onclick="selectPlato('mac','Macarrones con chorizo',9.95,event)">Añadir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="plato-card" id="card-carb">
+    <div class="plato-thumb">
+      <img src="products/espaguetis_sinfondo.png" alt="La carbonara de verdad">
+    </div>
+    <div class="plato-body">
+      <div>
+        <div class="plato-nombre">La carbonara de verdad</div>
+        <div class="plato-desc-short">No es la italiana. Es la tuya. La de toda la vida.</div>
+      </div>
+      <div class="plato-footer">
+        <div class="plato-precio">9,95€</div>
+        <div style="display:flex;gap:0.4rem;align-items:center;">
+          <button class="ver-btn" onclick="openDetalle('carb',event)">Ver</button>
+          <button class="add-btn" id="btn-carb" onclick="selectPlato('carb','La carbonara de verdad',9.95,event)">Añadir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="plato-card" id="card-mes" style="flex-direction: row-reverse;">
+    <div class="plato-thumb">
+      <img src="products/mensual_sinfondo.png" alt="Pasta del mes">
+    </div>
+    <div class="plato-body">
+      <div>
+        <div class="plato-nombre">Pasta del mes <span class="mes-badge">Agosto</span></div>
+        <div class="plato-desc-short">Cambia cada mes. A nuestro estilo, siempre distinta.</div>
+      </div>
+      <div class="plato-footer">
+        <div class="plato-precio">11,95€</div>
+        <div style="display:flex;gap:0.4rem;align-items:center;">
+          <button class="ver-btn" onclick="openDetalle('mes',event)">Ver</button>
+          <button class="add-btn" id="btn-mes" onclick="selectPlato('mes','Pasta del mes',11.95,event)">Añadir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BEBIDAS ══ -->
+<div class="screen" id="tab-bebidas">
+  <div class="slabel">Bebidas</div>
+
+  <div class="bebida-card" id="beb-cola" onclick="selectBebida('cola','Coca-Cola',3)">
+    <div class="bebida-img"><img src="products/coca_cola.png" alt="Coca-Cola"></div>
+    <div class="bebida-info"><div class="bebida-nombre">Coca-Cola</div><div class="bebida-vol">Lata 33cl</div></div>
+    <div class="bebida-precio">3,00€</div>
+    <div class="check-circle">✓</div>
+  </div>
+
+  <div class="bebida-card" id="beb-zero" onclick="selectBebida('zero','Coca-Cola Zero',3)">
+    <div class="bebida-img"><img src="products/coca_cola_zero.png" alt="Coca-Cola Zero"></div>
+    <div class="bebida-info"><div class="bebida-nombre">Coca-Cola Zero</div><div class="bebida-vol">Lata 33cl</div></div>
+    <div class="bebida-precio">3,00€</div>
+    <div class="check-circle">✓</div>
+  </div>
+
+  <div class="bebida-card" id="beb-fanta" onclick="selectBebida('fanta','Fanta Naranja',3)">
+    <div class="bebida-img"><img src="products/fanta.png" alt="Fanta Naranja"></div>
+    <div class="bebida-info"><div class="bebida-nombre">Fanta Naranja</div><div class="bebida-vol">Lata 33cl</div></div>
+    <div class="bebida-precio">3,00€</div>
+    <div class="check-circle">✓</div>
+  </div>
+
+  <div class="bebida-card" id="beb-mahou" onclick="selectBebida('mahou','Mahou',3)">
+    <div class="bebida-img"><img src="products/mahou.png" alt="Mahou"></div>
+    <div class="bebida-info"><div class="bebida-nombre">Mahou</div><div class="bebida-vol">Lata 33cl</div></div>
+    <div class="bebida-precio">3,00€</div>
+    <div class="check-circle">✓</div>
+  </div>
+</div>
+
+<!-- ══ POSTRES ══ -->
+<div class="screen" id="tab-postres">
+  <div class="coming-soon-wrap">
+    <div class="cs-logo"><svg class="logo-svg cs-logo-svg"><use href="#mach-logo"/></svg></div>
+    <div class="cs-badge">Coming Soon</div>
+    <h2>Los postres están en camino.</h2>
+    <p>Estamos pensando en algo que esté a la altura. Nada de tiramisú.</p>
+  </div>
+</div>
+
+<!-- ══ DETALLE ══ -->
+<div id="screen-detalle">
+  <div class="detalle-img" id="det-img">
+    <button class="back-btn back-btn-abs" onclick="closeDetalle()">←</button>
+    <img id="det-img-element" style="display:none;" alt="">
+    <div class="detalle-img-ph" id="det-img-ph">mach</div>
+  </div>
+  <div class="detalle-body">
+    <div class="detalle-nombre" id="det-nombre">—</div>
+    <div class="detalle-precio" id="det-precio">—</div>
+    <div class="detalle-subtitulo">El plato</div>
+    <div class="detalle-desc" id="det-desc">—</div>
+    <div class="detalle-sep"></div>
+    <div class="detalle-subtitulo">Ingredientes</div>
+    <div class="detalle-ingredientes" id="det-ings"></div>
+  </div>
+</div>
+
+<!-- ══ RESUMEN ══ -->
+<div class="screen" id="screen-resumen">
+  <div class="resumen-header">
+    <button class="back-btn" style="box-shadow:none;background:rgba(196,74,26,0.08);border:none;" onclick="closeResumen()">←</button>
+    <span class="slabel" style="padding:0;flex:1;">Tu pedido</span>
+  </div>
+  <div class="resumen-card">
+    <div class="res-item" id="res-plato" style="display:none">
+      <div><div class="res-nombre" id="res-plato-n">—</div><div class="res-sub">Plato principal</div></div>
+      <div class="res-precio" id="res-plato-p">—</div>
+    </div>
+    <div class="res-item" id="res-queso" style="display:none">
+      <div><div class="res-nombre">Queso rallado</div><div class="res-sub">Extra</div></div>
+      <div class="res-precio">+1,00€</div>
+    </div>
+    <div class="res-item" id="res-beb" style="display:none">
+      <div><div class="res-nombre" id="res-beb-n">—</div><div class="res-sub">Bebida</div></div>
+      <div class="res-precio">3,00€</div>
+    </div>
+  </div>
+  <div class="res-total"><span>Total</span><span id="res-total-v">—</span></div>
+</div>
+
+<!-- ══ CHECKOUT ══ -->
+<div class="screen" id="screen-checkout">
+  <div class="checkout-wrap">
+    <div class="checkout-logo-circle"><svg class="logo-svg checkout-logo-svg" style="color:var(--crema);"><use href="#mach-logo"/></svg></div>
+    <h2>Esto tiene un nombre:<br>crueldad premeditada.</h2>
+    <p class="sub">Este pedido era solo una simulación. Mach todavía no está disponible, pero está muy, muy cerca.<br><br>Deja tu email y serás el primero en saberlo cuando abramos.</p>
+    <input type="email" class="email-input" id="email-inp" placeholder="tu@email.com">
+    <button class="submit-btn" onclick="submitEmail()">Apúntame a la lista</button>
+    <p class="disclaimer">Sin spam. Solo mach cuando esté listo.</p>
+  </div>
+</div>
+
+<!-- ══ GRACIAS ══ -->
+<div class="screen" id="screen-gracias">
+  <div class="gracias-wrap">
+    <div class="big-logo"><svg class="logo-svg big-logo-svg"><use href="#mach-logo"/></svg></div>
+    <h2>Estás dentro.</h2>
+    <div class="pedido-tag" id="gracias-tag"></div>
+    <p>Te avisamos en cuanto abramos. Si conoces a alguien que también lo merezca, pásale el enlace.</p>
+    <a class="ig-btn" href="https://instagram.com/pidemach" target="_blank">@pidemach en Instagram</a>
+  </div>
+</div>
+
+<!-- ══ QUESO POP ══ -->
+<div class="pop-overlay" id="queso-pop" onclick="cerrarPop(event)">
+  <div class="pop-sheet">
+    <div class="pop-handle"></div>
+    <div class="pop-icon">🧀</div>
+    <div class="pop-title">¿Con queso rallado?</div>
+    <div class="pop-sub">Una pregunta que merece un momento de reflexión.<br>Nosotros ya sabemos la respuesta.</div>
+    <div class="pop-btns">
+      <button class="pop-btn-si" onclick="quesoSi()">
+        Sí, ponme queso
+        <span class="pop-precio">+1,00€</span>
+      </button>
+      <button class="pop-btn-no" onclick="quesoNo()">Ahora no</button>
+    </div>
+  </div>
+</div>
+
+<!-- CTA BAR -->
+<div class="cta-bar" id="cta-bar">
+  <button class="cta-btn" id="cta-btn" onclick="ctaAction()" disabled>
+    <span id="cta-label">Elige un plato para empezar</span>
+    <div class="cta-right-accent">
+      <span id="cta-total">0,00€</span>
+      <div class="cta-arrow-circle">→</div>
+    </div>
+  </button>
+</div>
+
+<script>
+const S = { plato:null, platoN:null, platoP:0, queso:false, bebida:null, bebidaN:null };
+let currentView = 'carta';
+let pendingPlato = null;
+
+const PLATOS = {
+  mac: {
+    nombre:'Macarrones con chorizo', precio:'9,95€', precioN:9.95,
+    img:'products/macarrones.jpeg',
+    desc:'El plato que ningún italiano sabe hacer porque ninguno lo ha probado. Aquí no hay nonna, hay abuela. Y la abuela siempre tiene razón. Tomate Mutti Polpa de primera, chorizo oreado que huele desde el portal y rigatoni al punto. Simple, honesto y tuyo desde siempre.',
+    ings:['Rigatoni','Tomate Mutti Polpa','Chorizo oreado','Cebolla (o no)','Aceite de oliva']
+  },
+  carb: {
+    nombre:'La carbonara de verdad', precio:'9,95€', precioN:9.95,
+    img:'products/spaguetti.jpeg',
+    desc:'La carbonara que aprendiste de tu madre, que la aprendió de la suya, que nunca pisó Italia. Nata, bacon, cebolla y pimienta. Los puristas italianos se escandalizan. Tú, mientras tanto, repites. Eso lo dice todo.',
+    ings:['Espagueti','Nata','Bacon','Cebolla','Pimienta negra','Queso rallado']
+  },
+  mes: {
+    nombre:'Pasta del mes', precio:'11,95€', precioN:11.95,
+    img:'products/mensual_sinfondo.png',
+    desc:'Cada mes, un plato diferente. A nuestro estilo, siempre con sentido. Puede ser pasta con carrilleras ibéricas, un cacio e pepe con queso manchego, o algo que todavía no hemos anunciado. Apúntate a la lista de espera para ser el primero en enterarte.',
+    ings:['Cambia cada mes','A nuestro estilo','Siempre distinto']
+  }
+};
+
+function fmt(n){ return n.toFixed(2).replace('.',',')+'\u20ac'; }
+function total(){ return S.platoP+(S.queso?1:0)+(S.bebida?3:0); }
+
+function updateCTA(){
+  document.getElementById('cta-total').textContent = fmt(total());
+  const btn = document.getElementById('cta-btn');
+  const lbl = document.getElementById('cta-label');
+  let count = 0;
+  if(S.plato) count++;
+  if(S.queso) count++;
+  if(S.bebida) count++;
+  document.getElementById('bcount').textContent = count;
+  if(currentView==='carta'){
+    btn.disabled = !S.plato;
+    lbl.textContent = S.plato ? 'Ver pedido' : 'Elige un plato para empezar';
+  } else if(currentView==='resumen'){
+    btn.disabled = false;
+    lbl.textContent = 'Ir a pagar';
+  } else if(currentView==='detalle'){
+    const id = window._detalleId;
+    btn.disabled = false;
+    lbl.textContent = S.plato===id ? '✓ Ya en el pedido' : 'Añadir al pedido';
+    document.getElementById('cta-total').textContent = PLATOS[id].precio;
+  }
+}
+
+function showTab(id, el){
+  const allScreens = ['tab-platos','tab-bebidas','tab-postres','screen-resumen','screen-checkout','screen-gracias'];
+  allScreens.forEach(s=>{ const e=document.getElementById(s); if(e){e.style.display='none';e.classList.remove('active');} });
+  document.getElementById('screen-detalle').style.display='none';
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).style.display='block';
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('main-tabs').style.display='flex';
+  document.getElementById('cta-bar').style.display='block';
+  currentView='carta';
+  updateCTA();
+  window.scrollTo(0,0);
+}
+
+function selectPlato(id, nombre, price, e){
+  if(e) e.stopPropagation();
+  if(S.plato===id){
+    S.plato=null; S.platoN=null; S.platoP=0;
+    document.getElementById('card-'+id).classList.remove('selected');
+    document.getElementById('btn-'+id).textContent='Añadir';
+    document.getElementById('btn-'+id).classList.remove('added');
+    updateCTA(); return;
+  }
+  // deselect previous
+  ['mac','carb','mes'].forEach(p=>{
+    document.getElementById('card-'+p).classList.remove('selected');
+    document.getElementById('btn-'+p).textContent='Añadir';
+    document.getElementById('btn-'+p).classList.remove('added');
+  });
+  S.plato=id; S.platoN=nombre; S.platoP=price;
+  document.getElementById('card-'+id).classList.add('selected');
+  document.getElementById('btn-'+id).textContent='✓ Añadido';
+  document.getElementById('btn-'+id).classList.add('added');
+  // Show queso popup
+  pendingPlato = id;
+  abrirPop();
+  updateCTA();
+}
+
+function abrirPop(){
+  document.getElementById('queso-pop').classList.add('open');
+}
+function cerrarPop(e){
+  if(e && e.target !== document.getElementById('queso-pop')) return;
+  document.getElementById('queso-pop').classList.remove('open');
+}
+function quesoSi(){
+  S.queso = true;
+  document.getElementById('queso-pop').classList.remove('open');
+  updateCTA();
+}
+function quesoNo(){
+  S.queso = false;
+  document.getElementById('queso-pop').classList.remove('open');
+  updateCTA();
+}
+
+function openDetalle(id, e){
+  if(e) e.stopPropagation();
+  const d = PLATOS[id];
+  document.getElementById('det-nombre').textContent = d.nombre;
+  document.getElementById('det-precio').textContent = d.precio;
+  document.getElementById('det-desc').textContent = d.desc;
+  document.getElementById('det-ings').innerHTML = d.ings.map(i=>`<span class="ing-tag">${i}</span>`).join('');
+  
+  // Set detail image
+  const detImg = document.getElementById('det-img-element');
+  const detPh = document.getElementById('det-img-ph');
+  if (d.img) {
+    detImg.src = d.img;
+    detImg.style.display = 'block';
+    detPh.style.display = 'none';
+  } else {
+    detImg.src = '';
+    detImg.style.display = 'none';
+    detPh.style.display = 'block';
+  }
+
+  ['tab-platos','tab-bebidas','tab-postres'].forEach(s=>{
+    document.getElementById(s).style.display='none';
+    document.getElementById(s).classList.remove('active');
+  });
+  document.getElementById('main-tabs').style.display='none';
+  const det = document.getElementById('screen-detalle');
+  det.style.display='block'; det.classList.add('active');
+  window._detalleId = id;
+  currentView='detalle';
+  updateCTA();
+  window.scrollTo(0,0);
+}
+
+function closeDetalle(){
+  document.getElementById('screen-detalle').style.display='none';
+  document.getElementById('screen-detalle').classList.remove('active');
+  document.getElementById('main-tabs').style.display='flex';
+  document.getElementById('tab-platos').style.display='block';
+  document.getElementById('tab-platos').classList.add('active');
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===0));
+  currentView='carta'; updateCTA(); window.scrollTo(0,0);
+}
+
+function selectBebida(id,nombre){
+  ['cola','zero','fanta','mahou'].forEach(b=>document.getElementById('beb-'+b).classList.remove('selected'));
+  if(S.bebida===id){ S.bebida=null; S.bebidaN=null; }
+  else { S.bebida=id; S.bebidaN=nombre; document.getElementById('beb-'+id).classList.add('selected'); }
+  updateCTA();
+}
+
+function ctaAction(){
+  if(currentView==='detalle'){
+    const id=window._detalleId; const d=PLATOS[id];
+    if(S.plato!==id){ selectPlato(id,d.nombre,d.precioN,null); }
+    else { closeDetalle(); }
+  } else if(currentView==='carta') goResumen();
+  else if(currentView==='resumen') goCheckout();
+}
+
+function goResumen(){
+  if(!S.plato) return;
+  currentView='resumen';
+  ['tab-platos','tab-bebidas','tab-postres','screen-detalle'].forEach(s=>{
+    const el=document.getElementById(s); if(el){el.style.display='none';el.classList.remove('active');}
+  });
+  document.getElementById('main-tabs').style.display='none';
+  const r=document.getElementById('screen-resumen');
+  r.style.display='block'; r.classList.add('active');
+  document.getElementById('res-plato').style.display='flex';
+  document.getElementById('res-plato-n').textContent=S.platoN;
+  document.getElementById('res-plato-p').textContent=fmt(S.platoP);
+  document.getElementById('res-queso').style.display=S.queso?'flex':'none';
+  const rb=document.getElementById('res-beb');
+  if(S.bebida){rb.style.display='flex';document.getElementById('res-beb-n').textContent=S.bebidaN;}
+  else rb.style.display='none';
+  document.getElementById('res-total-v').textContent=fmt(total());
+  document.getElementById('cta-btn').disabled=false;
+  document.getElementById('cta-label').textContent='Ir a pagar';
+  document.getElementById('cta-total').textContent=fmt(total());
+  window.scrollTo(0,0);
+}
+
+function closeResumen(){
+  currentView='carta';
+  document.getElementById('screen-resumen').style.display='none';
+  document.getElementById('screen-resumen').classList.remove('active');
+  document.getElementById('main-tabs').style.display='flex';
+  document.getElementById('tab-platos').style.display='block';
+  document.getElementById('tab-platos').classList.add('active');
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===0));
+  updateCTA(); window.scrollTo(0,0);
+}
+
+function goCheckout(){
+  currentView='checkout';
+  ['tab-platos','tab-bebidas','tab-postres','screen-resumen'].forEach(s=>{
+    const el=document.getElementById(s); if(el){el.style.display='none';el.classList.remove('active');}
+  });
+  document.getElementById('main-tabs').style.display='none';
+  document.getElementById('screen-checkout').style.display='block';
+  document.getElementById('screen-checkout').classList.add('active');
+  document.getElementById('cta-bar').style.display='none';
+  window.scrollTo(0,0);
+}
+
+function submitEmail(){
+  const email=document.getElementById('email-inp').value.trim();
+  if(!email||!email.includes('@')){ document.getElementById('email-inp').style.borderColor='#e53e3e'; return; }
+  console.log('LEAD',{email,plato:S.platoN,bebida:S.bebidaN,queso:S.queso,total:total(),ts:new Date().toISOString()});
+  const tag=S.platoN+(S.queso?' + Queso':'')+(S.bebidaN?' + '+S.bebidaN:'');
+  document.getElementById('gracias-tag').textContent='Ibas a pedir: '+tag;
+  document.getElementById('screen-checkout').style.display='none';
+  document.getElementById('screen-gracias').style.display='block';
+  document.getElementById('screen-gracias').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+showTab('platos', document.querySelector('.tab'));
+</script>
+</body>
+</html>
