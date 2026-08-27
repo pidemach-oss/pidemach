@@ -907,7 +907,7 @@ function bebidasTotal(){ let t=0; for(const id in S.bebidas) t+=S.bebidas[id].pr
 function total(){ return platosTotal()+bebidasTotal(); }
 function platosCount(){ let c=0; for(const id in S.platos) c+=S.platos[id].qty; return c; }
 function bebidasCount(){ return Object.keys(S.bebidas).length; }
-function itemsCount(){ let c=Object.keys(S.platos).length+Object.keys(S.bebidas).length; return c; }
+function itemsCount(){ let c=0; for(const id in S.platos) c+=S.platos[id].qty; for(const id in S.bebidas) c+=S.bebidas[id].qty; return c; }
 
 function updateCardButtons(){
   ['mac','carb','mes'].forEach(id=>{
