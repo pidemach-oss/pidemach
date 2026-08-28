@@ -972,14 +972,14 @@ function selectPlato(id, nombre, price, e){
     delete S.platos[id];
     document.getElementById('card-'+id).classList.remove('selected');
     updateCardButtons();
-    gtag('event','quitar_plato',{plato:nombre});
+    gtag('event','quitar_'+id,{plato:nombre});
     updateCTA(); return;
   }
   S.platos[id] = { nombre:nombre, price:price, queso:false, qty:1 };
   document.getElementById('card-'+id).classList.add('selected');
   pendingPlato = id;
   abrirPop();
-  gtag('event','añadir_plato',{plato:nombre,precio:price});
+  gtag('event','añadir_'+id,{plato:nombre,precio:price});
   updateCardButtons();
   updateCTA();
 }
