@@ -128,6 +128,13 @@
   .resto-option:hover { background:rgba(196,74,26,0.06); }
   .resto-option.selected { color:var(--naranja); font-weight:800; }
   .resto-prox { padding:0.65rem 0.5rem; font-size:0.78rem; font-weight:600; color:rgba(30,30,30,0.3); font-style:italic; }
+  @keyframes shake {
+    0%,100% { transform:translateX(0); }
+    20% { transform:translateX(-6px); }
+    40% { transform:translateX(6px); }
+    60% { transform:translateX(-4px); }
+    80% { transform:translateX(4px); }
+  }
 
   /* SCREENS */
   .screen { display:none; padding:1.2rem 1.2rem 120px; }
@@ -688,7 +695,7 @@
   <div class="header-top">
     <div class="logo"><svg class="logo-svg"><use href="#mach-logo"/></svg></div>
     <div style="display:flex;align-items:center;gap:0.5rem;">
-      <div class="resto-bar" onclick="openRestoPicker()">
+      <div class="resto-bar" id="resto-bar-btn" onclick="openRestoPicker()">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
         <span id="resto-label">Elige restaurante</span>
         <span style="font-size:0.6rem;">▾</span>
@@ -1213,6 +1220,13 @@ function renderResumen(){
 
 function goResumen(){
   if(platosCount()===0) return;
+  if(!S.resto){
+    const bar=document.getElementById('resto-bar-btn');
+    bar.style.animation='shake 0.4s ease';
+    setTimeout(()=>bar.style.animation='',400);
+    openRestoPicker();
+    return;
+  }
   currentView='resumen';
   ['tab-platos','tab-bebidas','tab-postres','screen-detalle'].forEach(s=>{
     const el=document.getElementById(s); if(el){el.style.display='none';el.classList.remove('active');}
