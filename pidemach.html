@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>mach · Pide mach</title>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Roboto:wght@300;400;500;700;900&display=swap');
   :root { --naranja:#C44A1A; --crema:#FAF5EE; --negro:#1E1E1E; }
@@ -961,12 +965,14 @@ function selectPlato(id, nombre, price, e){
     delete S.platos[id];
     document.getElementById('card-'+id).classList.remove('selected');
     updateCardButtons();
+    va('event',{name:'quitar_plato',data:{plato:nombre}});
     updateCTA(); return;
   }
   S.platos[id] = { nombre:nombre, price:price, queso:false, qty:1 };
   document.getElementById('card-'+id).classList.add('selected');
   pendingPlato = id;
   abrirPop();
+  va('event',{name:'añadir_plato',data:{plato:nombre,precio:price}});
   updateCardButtons();
   updateCTA();
 }
@@ -993,11 +999,13 @@ function cerrarPop(e){
 }
 function quesoSi(){
   if(pendingPlato && S.platos[pendingPlato]) S.platos[pendingPlato].queso = true;
+  va('event',{name:'queso_si',data:{plato:pendingPlato}});
   document.getElementById('queso-pop').classList.remove('open');
   updateCTA();
 }
 function quesoNo(){
   if(pendingPlato && S.platos[pendingPlato]) S.platos[pendingPlato].queso = false;
+  va('event',{name:'queso_no',data:{plato:pendingPlato}});
   document.getElementById('queso-pop').classList.remove('open');
   updateCTA();
 }
@@ -1054,9 +1062,11 @@ function selectBebida(id,nombre,price){
   if(S.bebidas[id]){
     delete S.bebidas[id];
     document.getElementById('beb-'+id).classList.remove('selected');
+    va('event',{name:'quitar_bebida',data:{bebida:nombre}});
   } else {
     S.bebidas[id] = {nombre:nombre, price:price, qty:1};
     document.getElementById('beb-'+id).classList.add('selected');
+    va('event',{name:'añadir_bebida',data:{bebida:nombre,precio:price}});
   }
   updateBebidaCards();
   updateCTA();
@@ -1125,6 +1135,7 @@ function goResumen(){
   const r=document.getElementById('screen-resumen');
   r.style.display='block'; r.classList.add('active');
   renderResumen();
+  va('event',{name:'ver_pedido',data:{total:total(),platos:platosCount(),bebidas:bebidasCount()}});
   document.getElementById('cta-btn').disabled=false;
   document.getElementById('cta-label').textContent='Ir a pagar';
   window.scrollTo(0,0);
@@ -1149,6 +1160,7 @@ function goCheckout(){
   document.getElementById('main-tabs').style.display='none';
   document.getElementById('screen-checkout').style.display='block';
   document.getElementById('screen-checkout').classList.add('active');
+  va('event',{name:'ir_a_pagar',data:{total:total()}});
   document.getElementById('cta-bar').style.display='none';
   window.scrollTo(0,0);
 }
@@ -1161,6 +1173,7 @@ function submitEmail(){
   const allItems=[...items,...drinks];
   console.log('LEAD',{email,platos:S.platos,bebidas:S.bebidas,total:total(),ts:new Date().toISOString()});
   const tag=allItems.join(' + ');
+  va('event',{name:'submit_email',data:{email:email,pedido:tag,total:total()}});
   document.getElementById('gracias-tag').textContent='Ibas a pedir: '+tag;
   document.getElementById('screen-checkout').style.display='none';
   document.getElementById('screen-gracias').style.display='block';
