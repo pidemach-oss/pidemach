@@ -1029,7 +1029,7 @@ function updateCTA(){
     lbl.textContent = platosCount()>0 ? 'Ver pedido' : 'Elige un plato para empezar';
   } else if(currentView==='resumen'){
     btn.disabled = false;
-    lbl.textContent = 'Ir a pagar';
+    lbl.textContent = 'Haz tu pedido';
   } else if(currentView==='detalle'){
     btn.disabled = false;
     lbl.textContent = S.platos[window._detalleId] ? '✓ Ya en el pedido' : 'Añadir al pedido';
@@ -1237,7 +1237,7 @@ function goResumen(){
   renderResumen();
   gtag('event','ver_pedido',{total:total(),platos:platosCount(),bebidas:bebidasCount()});
   document.getElementById('cta-btn').disabled=false;
-  document.getElementById('cta-label').textContent='Ir a pagar';
+  document.getElementById('cta-label').textContent='Haz tu pedido';
   window.scrollTo(0,0);
 }
 
